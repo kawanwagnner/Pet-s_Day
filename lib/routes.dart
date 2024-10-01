@@ -10,8 +10,31 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case '/home':
       return MaterialPageRoute(builder: (context) => HomeScreen());
     case '/petDetails':
-      return MaterialPageRoute(builder: (context) => PetDetailsScreen());
+      // Verifica se os argumentos são passados corre tamente
+      final args = settings.arguments as Map<String, dynamic>?;
+
+      if (args != null) {
+        return MaterialPageRoute(
+          builder: (context) => PetDetailsScreen(
+            petName: args['petName'],
+            imagePath: args['imagePath'],
+          ),
+        );
+      } else {
+        return _errorRoute();
+      }
     default:
       return MaterialPageRoute(builder: (context) => HomeScreen());
   }
+}
+
+// Função para exibir uma tela de erro caso os argumentos não sejam fornecidos corretamente
+Route<dynamic> _errorRoute() {
+  return MaterialPageRoute(
+    builder: (context) => Scaffold(
+      appBar: AppBar(title: Text('Error')),
+      body:
+          Center(child: Text('Error: Missing arguments for PetDetailsScreen!')),
+    ),
+  );
 }
