@@ -4,8 +4,9 @@ class PetCard extends StatelessWidget {
   final String petName;
   final String imagePath; // Novo parâmetro para o caminho da imagem
 
-  PetCard(
-      {required this.petName,
+  const PetCard(
+      {super.key,
+      required this.petName,
       required this.imagePath}); // Inclua imagePath no construtor
 
   @override
@@ -24,7 +25,7 @@ class PetCard extends StatelessWidget {
       },
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        margin: EdgeInsets.all(10),
+        margin: const EdgeInsets.all(10),
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Row(
@@ -34,23 +35,23 @@ class PetCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15),
                 child: Image.asset(
                   imagePath,
-                  width: 100,
-                  height: 100,
+                  width: 80,
+                  height: 80,
                   fit: BoxFit.cover,
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     petName,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text('2 Years, 7kg'), // Informações adicionais do pet
+                  const Text('2 anos, 7kg'), // Informações adicionais do pet
                 ],
               ),
             ],

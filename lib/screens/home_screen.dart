@@ -4,10 +4,12 @@ import '../widgets/category_chips.dart';
 import '../widgets/pet_card.dart';
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFDE4E4), // Cor de fundo igual ao mockup
+      backgroundColor: const Color(0xFFFDE4E4),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -16,22 +18,21 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Localização e ícones de busca/notificação
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
+                    const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
-                          'Location',
+                          'Localização',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey,
                           ),
                         ),
                         Text(
-                          '45141 Essen, Germany',
+                          '+55 (11) - SP, Brasil',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -55,20 +56,17 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                // Banner de Comunidade
-                BannerWidget(),
+                const BannerWidget(),
                 const SizedBox(height: 20),
 
-                // Categorias (Chips)
                 CategoryChips(),
                 const SizedBox(height: 20),
 
-                // Título "Pets near me" com opção de "Ver todos"
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'Pets near me',
+                      'Pets próximos a mim',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -77,7 +75,7 @@ class HomeScreen extends StatelessWidget {
                     TextButton(
                       onPressed: () {},
                       child: const Text(
-                        'View All',
+                        'Ver todos',
                         style: TextStyle(
                           color: Colors.redAccent,
                           fontSize: 16,
@@ -88,33 +86,25 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
 
-                // Grid de Pets
-                GridView(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 3 / 4, // Proporção do card
+                // Carrossel com PageView
+                SizedBox(
+                  height: 250,
+                  child: PageView(
+                    pageSnapping: true,
+                    children: [
+                      _buildPetRow(context, 'Lucky', 'assets/img/dog2.png',
+                          'Lily', 'assets/img/cat2.png'),
+                      _buildPetRow(context, 'Max', 'assets/img/dog2.png',
+                          'Bella', 'assets/img/cat2.png'),
+                      // Adicione mais linhas conforme necessário
+                    ],
                   ),
-                  children: [
-                    PetCard(
-                      petName: 'Lucky',
-                      imagePath: 'assets/img/dog2.png',
-                    ),
-                    PetCard(
-                      petName: 'Lily',
-                      imagePath: 'assets/img/cat2.png',
-                    ),
-                  ],
                 ),
               ],
             ),
           ),
         ),
       ),
-      // Barra de navegação inferior
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
@@ -133,6 +123,38 @@ class HomeScreen extends StatelessWidget {
         selectedItemColor: Colors.redAccent,
         unselectedItemColor: Colors.grey,
       ),
+    );
+  }
+
+  Widget _buildPetRow(BuildContext context, String petName1, String imagePath1,
+      String petName2, String imagePath2) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Transform.scale(
+          scale: 1.1, // Ajusta a escala do card
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width *
+                0.45, // Ajusta a largura do card
+            child: PetCard(
+              petName: petName1,
+              imagePath: imagePath1,
+            ),
+          ),
+        ),
+        const SizedBox(width: 10), // Espaçamento entre os cartões
+        Transform.scale(
+          scale: 1.1, // Ajusta a escala do card
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width *
+                0.45, // Ajusta a largura do card
+            child: PetCard(
+              petName: petName2,
+              imagePath: imagePath2,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class BannerWidget extends StatelessWidget {
+  const BannerWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -15,14 +17,18 @@ class BannerWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'Join Our Animal Lovers Community',
-                style: TextStyle(color: Colors.white, fontSize: 18),
+              const SizedBox(
+                width: 300,
+                child: Text(
+                  'Conheça nossa comunidade de Amor de Pet',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {},
-                child: Text('Continue'),
+                child: const Text('Entrar agora'),
               ),
             ],
           ),
