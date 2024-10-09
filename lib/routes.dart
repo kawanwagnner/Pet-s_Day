@@ -24,7 +24,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
         return _errorRoute();
       }
     default:
-      return MaterialPageRoute(builder: (context) => HomeScreen());
+      return MaterialPageRoute(builder: (context) => const HomeScreen());
   }
 }
 
@@ -32,9 +32,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
 Route<dynamic> _errorRoute() {
   return MaterialPageRoute(
     builder: (context) => Scaffold(
-      appBar: AppBar(title: Text('Error')),
-      body:
-          Center(child: Text('Error: Missing arguments for PetDetailsScreen!')),
+      appBar: AppBar(title: const Text('Error')),
+      body: const Center(
+          child: Text('Error: Missing arguments for PetDetailsScreen!')),
     ),
   );
 }
