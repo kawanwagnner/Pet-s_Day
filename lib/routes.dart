@@ -10,14 +10,21 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case '/home':
       return MaterialPageRoute(builder: (context) => HomeScreen());
     case '/petDetails':
-      // Verifica se os argumentos são passados corre tamente
+      // Verifica se os argumentos são passados corretamente
       final args = settings.arguments as Map<String, dynamic>?;
 
-      if (args != null) {
+      // Verifique se os argumentos não são nulos e se todos os campos esperados estão presentes
+      if (args != null &&
+          args.containsKey('petName') &&
+          args.containsKey('imagePath') &&
+          args.containsKey('age') &&
+          args.containsKey('weight')) {
         return MaterialPageRoute(
           builder: (context) => PetDetailsScreen(
             petName: args['petName'],
             imagePath: args['imagePath'],
+            age: args['age'], // Passa a idade correta
+            weight: args['weight'], // Passa o peso correto
           ),
         );
       } else {

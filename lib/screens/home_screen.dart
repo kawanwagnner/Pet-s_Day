@@ -16,16 +16,43 @@ class _HomeScreenState extends State<HomeScreen> {
     viewportFraction: 0.75,
   );
 
+  // Lista de URLs de imagens transparentes de cães e gatos
+  final List<String> imageUrls = [
+    'https://cdn.pixabay.com/photo/2017/04/23/07/35/isolated-2253166_1280.png', // Cão 1
+    'https://cdn.pixabay.com/photo/2018/08/16/20/00/colli-3611293_1280.png', // Cão 2
+    'https://cdn.pixabay.com/photo/2018/11/03/12/17/dog-3791920_1280.png', // Cão 3
+    'https://cdn.pixabay.com/photo/2018/03/17/15/30/dog-3234285_1280.png', // Cão 4
+    'https://cdn.pixabay.com/photo/2018/02/15/13/10/golden-retriever-3155242_960_720.png', // Cão 5
+    'https://cdn.pixabay.com/photo/2018/08/16/20/01/rhodesian-ridgeback-3611294_1280.png', // Cão 6
+    'https://cdn.pixabay.com/photo/2018/04/06/17/27/animal-3296309_1280.png', // Gato 1
+    'https://cdn.pixabay.com/photo/2017/08/22/16/23/cat-2669554_1280.png', // Gato 2
+    'https://cdn.pixabay.com/photo/2017/08/13/19/23/sofa-2638296_960_720.png', // Gato 3
+    'https://cdn.pixabay.com/photo/2018/11/02/15/54/cat-3790477_960_720.png', // Gato 4
+  ];
+
   // Lista de pets com informações dinâmicas
   final List<Map<String, dynamic>> pets = List.generate(
     10,
     (index) => {
-      'petName': 'Dog ${index + 1}', // Nome do cachorro dinâmico
-      'imagePath': 'assets/img/dog2.png', // Caminho da imagem do cachorro
+      'petName': 'Pet ${index + 1}', // Nome do pet dinâmico
+      'imagePath': '', // Caminho da imagem do pet
       'age': 2 + (index % 3), // Idade (exemplo de variação)
       'weight': 5.0 + (index % 3) * 2, // Peso (exemplo de variação)
     },
   );
+
+  @override
+  void initState() {
+    super.initState();
+    _assignImagesToPets();
+  }
+
+  // Atribuindo imagens transparentes para cada pet dinamicamente
+  void _assignImagesToPets() {
+    for (int i = 0; i < pets.length; i++) {
+      pets[i]['imagePath'] = imageUrls[i];
+    }
+  }
 
   @override
   void dispose() {
@@ -136,9 +163,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     controller: _pageController,
                     itemCount: pets.length, // Usando o tamanho da lista de pets
                     itemBuilder: (context, index) {
-                      return _buildPetRow(
+                      return _buildPetCard(
                         context,
-                        pets[index]['petName'], // Nome do cachorro
+                        pets[index]['petName'], // Nome do pet
                         pets[index]['imagePath'], // Caminho da imagem
                         pets[index]['age'], // Idade
                         pets[index]['weight'], // Peso
@@ -179,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // Passando os parâmetros dinâmicos para o PetCard
-  Widget _buildPetRow(BuildContext context, String petName, String imagePath,
+  Widget _buildPetCard(BuildContext context, String petName, String imagePath,
       int age, double weight) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -193,7 +220,6 @@ class _HomeScreenState extends State<HomeScreen> {
             age: age,
             weight: weight,
             onTap: () {
-              // Navegação para a tela de detalhes do pet
               Navigator.pushNamed(
                 context,
                 '/petDetails',
