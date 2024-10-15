@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class PetDetailsScreen extends StatelessWidget {
+class PetDetailsScreen extends StatefulWidget {
   final String petName;
   final String imagePath;
   final int age;
@@ -15,26 +15,72 @@ class PetDetailsScreen extends StatelessWidget {
   });
 
   @override
+  _PetDetailsScreenState createState() => _PetDetailsScreenState();
+}
+
+class _PetDetailsScreenState extends State<PetDetailsScreen> {
+  bool isFavorited = false; // Variável que controla se o pet está favoritado
+
+  // Função para alternar o estado de favorito
+  void toggleFavorite() {
+    setState(() {
+      isFavorited = !isFavorited;
+    });
+
+    // Salvar ou remover o pet da lista de favoritos
+    if (isFavorited) {
+      // Salva o pet na lista de favoritos
+      addPetToFavorites();
+      showSnackBar("Pet favoritado com sucesso!");
+    } else {
+      // Remove o pet da lista de favoritos
+      removePetFromFavorites();
+      showSnackBar("Pet removido dos favoritos.");
+    }
+  }
+
+  // Função para adicionar pet aos favoritos (essa função pode ser implementada com algum gerenciador de estado)
+  void addPetToFavorites() {
+    // Aqui, você pode implementar um método que adiciona o pet a uma lista de favoritos
+    // Por exemplo, você pode usar o Provider, Riverpod ou Bloc para gerenciar o estado global.
+    // Por enquanto, vamos fazer um print apenas para simulação.
+    print("Pet ${widget.petName} adicionado aos favoritos!");
+  }
+
+  // Função para remover pet dos favoritos
+  void removePetFromFavorites() {
+    print("Pet ${widget.petName} removido dos favoritos!");
+  }
+
+  // Função para exibir o SnackBar com a mensagem de sucesso ou erro
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Verificando e transformando o nome da imagem com base no valor recebido
-    String displayedImagePath = imagePath;
-    if (imagePath.contains('dog2.png')) {
+    String displayedImagePath = widget.imagePath;
+    if (widget.imagePath.contains('dog2.png')) {
       displayedImagePath = 'assets/img/dog.png';
-    } else if (imagePath.contains('cat2.png')) {
+    } else if (widget.imagePath.contains('cat2.png')) {
       displayedImagePath = 'assets/img/cat.png';
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFDE4E4), // Cor de fundo similar à imagem
+      backgroundColor: const Color(0xFFFDE4E4),
       body: Stack(
         children: [
-          // A imagem do pet como fundo fixo
           Positioned(
             top: 0,
             left: 0,
             right: 0,
             child: Container(
-              height: 350, // Altura da imagem
+              height: 350,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: NetworkImage(displayedImagePath),
@@ -43,15 +89,10 @@ class PetDetailsScreen extends StatelessWidget {
               ),
             ),
           ),
-
-          // O conteúdo rolável
           SingleChildScrollView(
             child: Column(
               children: [
-                // Espaço para a imagem (fundo)
                 const SizedBox(height: 300),
-
-                // O card branco com informações
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
@@ -72,10 +113,9 @@ class PetDetailsScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Nome do pet
                       Center(
                         child: Text(
-                          petName, // Nome do pet vindo do argumento
+                          widget.petName,
                           style: const TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
@@ -93,14 +133,16 @@ class PetDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 15),
-                      // Informações de sexo, idade e peso
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           _buildInfoBox("Male", "Sex", Colors.red),
-                          _buildInfoBox("$age Years", "Age", Colors.orange),
-                          _buildInfoBox("${weight.toStringAsFixed(1)} kg",
-                              "Weight", Colors.purple),
+                          _buildInfoBox(
+                              "${widget.age} Years", "Age", Colors.orange),
+                          _buildInfoBox(
+                              "${widget.weight.toStringAsFixed(1)} kg",
+                              "Weight",
+                              Colors.purple),
                         ],
                       ),
                       const SizedBox(height: 15),
@@ -131,26 +173,30 @@ class PetDetailsScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 15),
                       const Text(
-                        "I found Lucky while she was being assaulted last November. After a month of therapy, she is now very active and waiting for a new home. Lucky is a loving and friendly pet looking for someone who can provide her with a lot of love and attention.I found Lucky while she was being assaulted last November. After a month of therapy, she is now very active and waiting for a new home. Lucky is a loving and friendly pet looking for someone who can provide her with a lot of love and attention.I found Lucky while she was being assaulted last November. After a month of therapy, she is now very active and waiting for a new home. Lucky is a loving and friendly pet looking for someone who can provide her with a lot of love and attention.I found Lucky while she was being assaulted last November. After a month of therapy, she is now very active and waiting for a new home. Lucky is a loving and friendly pet looking for someone who can provide her with a lot of love and attention.",
+                        "Eu encontrei a Lucky enquanto ela estava sendo agredida...",
                         style: TextStyle(fontSize: 16),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 15),
-                      // Botão "Continuar"
+                      // Botão "Favoritar"
                       Center(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 60, vertical: 15),
-                            backgroundColor: Colors.redAccent,
+                            backgroundColor:
+                                isFavorited ? Colors.redAccent : Colors.grey,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
                           ),
-                          onPressed: () {},
-                          child: const Text(
-                            "Continue",
-                            style: TextStyle(fontSize: 18, color: Colors.white),
+                          onPressed: toggleFavorite,
+                          child: Text(
+                            isFavorited ? "Favoritado" : "Favoritar",
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
@@ -160,15 +206,13 @@ class PetDetailsScreen extends StatelessWidget {
               ],
             ),
           ),
-
-          // Botão de voltar
           Positioned(
             top: 40,
             left: 16,
             child: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.black, size: 30),
               onPressed: () {
-                Navigator.pop(context); // Volta para a tela anterior
+                Navigator.pop(context);
               },
             ),
           ),
@@ -177,7 +221,6 @@ class PetDetailsScreen extends StatelessWidget {
     );
   }
 
-  // Método para criar um box de informações com estilo
   Widget _buildInfoBox(String value, String label, Color color) {
     return Container(
       width: 90,

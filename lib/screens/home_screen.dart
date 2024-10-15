@@ -3,11 +3,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../widgets/banner_widget.dart';
 import '../widgets/category_chips.dart';
 import '../widgets/pet_card.dart';
+import 'favorites_screen.dart'; // Certifique-se de importar o arquivo da tela de favoritos
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -15,6 +17,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final PageController _pageController = PageController(
     viewportFraction: 0.75,
   );
+
+  int _selectedIndex = 0; // Índice selecionado no BottomNavigationBar
 
   // Lista de URLs de imagens transparentes de cães e gatos
   final List<String> imageUrls = [
@@ -58,6 +62,18 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  // Método para navegação
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    if (index == 2) {
+      Navigator.pushNamed(
+          context, '/favorites'); // Navega para a tela de Favoritos
+    }
   }
 
   @override
@@ -181,6 +197,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex, // Controle do índice selecionado
+        onTap: _onItemTapped, // Definindo o método de navegação
         items: const [
           BottomNavigationBarItem(
             icon: FaIcon(FontAwesomeIcons.house), // Ícone home

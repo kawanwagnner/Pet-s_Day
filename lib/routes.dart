@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/welcome_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/pet_details_screen.dart';
+import 'screens/favorites_screen.dart'; // Adicione a importação da tela de favoritos
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -30,6 +31,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       } else {
         return _errorRoute();
       }
+    case '/favorites': // Nova rota para a tela de favoritos
+      return MaterialPageRoute(builder: (context) => FavoritesScreen());
     default:
       return MaterialPageRoute(builder: (context) => const HomeScreen());
   }
