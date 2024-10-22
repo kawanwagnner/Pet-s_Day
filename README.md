@@ -5,9 +5,8 @@
 <p align="center">Aplicação UI Pet shop Netflix</p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/react%20version-16.8.0-informational"/>
-  <img src="https://img.shields.io/badge/next%20version-latest-important" />
-  <img src="https://img.shields.io/badge/last%20commit-february-blue" />
+  <img src="https://img.shields.io/badge/flutter%20version-lastest-informational"/>
+  <img src="https://img.shields.io/badge/last%20commit-october-blue" />
   <img src="https://img.shields.io/badge/license-MIT-success"/>
 </p>
 
