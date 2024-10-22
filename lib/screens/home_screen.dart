@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../widgets/banner_widget.dart';
 import '../widgets/category_chips.dart';
 import '../widgets/pet_card.dart';
-import 'favorites_screen.dart'; // Certifique-se de importar o arquivo da tela de favoritos
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,16 +21,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Lista de URLs de imagens transparentes de cães e gatos
   final List<String> imageUrls = [
-    'https://cdn.pixabay.com/photo/2017/04/23/07/35/isolated-2253166_1280.png', // Cão 1
+    'https://cdn.pixabay.com/photo/2018/08/16/20/01/rhodesian-ridgeback-3611294_1280.png', // Cão 1
     'https://cdn.pixabay.com/photo/2018/08/16/20/00/colli-3611293_1280.png', // Cão 2
-    'https://cdn.pixabay.com/photo/2018/11/03/12/17/dog-3791920_1280.png', // Cão 3
+    'https://cdn.pixabay.com/photo/2022/11/07/11/19/dog-7576192_1280.png', // Cão 3
     'https://cdn.pixabay.com/photo/2018/03/17/15/30/dog-3234285_1280.png', // Cão 4
     'https://cdn.pixabay.com/photo/2018/02/15/13/10/golden-retriever-3155242_960_720.png', // Cão 5
-    'https://cdn.pixabay.com/photo/2018/08/16/20/01/rhodesian-ridgeback-3611294_1280.png', // Cão 6
-    'https://cdn.pixabay.com/photo/2018/04/06/17/27/animal-3296309_1280.png', // Gato 1
-    'https://cdn.pixabay.com/photo/2017/08/22/16/23/cat-2669554_1280.png', // Gato 2
-    'https://cdn.pixabay.com/photo/2017/08/13/19/23/sofa-2638296_960_720.png', // Gato 3
-    'https://cdn.pixabay.com/photo/2018/11/02/15/54/cat-3790477_960_720.png', // Gato 4
+    'https://cdn.pixabay.com/photo/2017/04/23/07/35/isolated-2253166_1280.png', // Cão 6
+    'https://cdn.pixabay.com/photo/2018/04/06/17/27/animal-3296309_1280.png', // Gato 7
+    'https://cdn.pixabay.com/photo/2017/08/12/16/14/cat-2634641_1280.png', // Gato 8
+    'https://cdn.pixabay.com/photo/2017/08/13/19/23/sofa-2638296_960_720.png', // Gato 9
+    'https://cdn.pixabay.com/photo/2018/11/02/15/54/cat-3790477_960_720.png', // Gato 10
   ];
 
   // Lista de pets com informações dinâmicas
@@ -147,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                CategoryChips(),
+                const CategoryChips(),
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -201,19 +200,31 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: _onItemTapped, // Definindo o método de navegação
         items: const [
           BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.house), // Ícone home
+            icon: FaIcon(
+              FontAwesomeIcons.house,
+              color: Colors.pink,
+            ), // Ícone home
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.user), // Ícone perfil (favoritos)
+            icon: FaIcon(
+              FontAwesomeIcons.user,
+              color: Colors.green,
+            ), // Ícone perfil (favoritos)
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.heart), // Ícone coração (favoritos)
+            icon: FaIcon(
+              FontAwesomeIcons.heart,
+              color: Colors.red,
+            ), // Ícone coração (favoritos)
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.gears), // Ícone de configurações
+            icon: FaIcon(
+              FontAwesomeIcons.gears,
+              color: Colors.black,
+            ), // Ícone de configurações
             label: '',
           ),
         ],

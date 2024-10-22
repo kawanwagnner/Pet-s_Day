@@ -15,6 +15,7 @@ class PetDetailsScreen extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _PetDetailsScreenState createState() => _PetDetailsScreenState();
 }
 
@@ -44,11 +45,13 @@ class _PetDetailsScreenState extends State<PetDetailsScreen> {
     // Aqui, você pode implementar um método que adiciona o pet a uma lista de favoritos
     // Por exemplo, você pode usar o Provider, Riverpod ou Bloc para gerenciar o estado global.
     // Por enquanto, vamos fazer um print apenas para simulação.
+    // ignore: avoid_print
     print("Pet ${widget.petName} adicionado aos favoritos!");
   }
 
   // Função para remover pet dos favoritos
   void removePetFromFavorites() {
+    // ignore: avoid_print
     print("Pet ${widget.petName} removido dos favoritos!");
   }
 
@@ -173,7 +176,7 @@ class _PetDetailsScreenState extends State<PetDetailsScreen> {
                       ),
                       const SizedBox(height: 15),
                       const Text(
-                        "Eu encontrei a Lucky enquanto ela estava sendo agredida...",
+                        "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).",
                         style: TextStyle(fontSize: 16),
                         textAlign: TextAlign.center,
                       ),

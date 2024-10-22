@@ -23,7 +23,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       ),
       backgroundColor: const Color(0xFFFDE4E4),
       body: favoritePets.isEmpty
-          ? Center(
+          ? const Center(
               child: Text(
                 'Nenhum favorito',
                 style: TextStyle(

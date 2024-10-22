@@ -7,9 +7,9 @@ import 'screens/favorites_screen.dart'; // Adicione a importação da tela de fa
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case '/':
-      return MaterialPageRoute(builder: (context) => WelcomeScreen());
+      return MaterialPageRoute(builder: (context) => const WelcomeScreen());
     case '/home':
-      return MaterialPageRoute(builder: (context) => HomeScreen());
+      return MaterialPageRoute(builder: (context) => const HomeScreen());
     case '/petDetails':
       // Verifica se os argumentos são passados corretamente
       final args = settings.arguments as Map<String, dynamic>?;
@@ -32,7 +32,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
         return _errorRoute();
       }
     case '/favorites': // Nova rota para a tela de favoritos
-      return MaterialPageRoute(builder: (context) => FavoritesScreen());
+      return MaterialPageRoute(builder: (context) => const FavoritesScreen());
     default:
       return MaterialPageRoute(builder: (context) => const HomeScreen());
   }
