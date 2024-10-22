@@ -34,11 +34,12 @@
 UI Pet Shop do serviço de adoção - Esse Projeto foi desenvolvido durante a um semestre no SENAI - "Ricardo Lerner" com o Professor Samuel Luis dos Santos | Bruce.
 
 ### ✅ Demonstração
+
 <img src="assets\img\mostruario-petadopt\tela1-welcome.png" />
 <img src="assets\img\mostruario-petadopt\tela2-home.png" />
 <img src="assets\img\mostruario-petadopt\tela3-details.png" />
 <img src="assets\img\mostruario-petadopt\tela4-description.png" />
-
+<img src="assets\img\mostruario-petadopt\tela5-favs.png" />
 
 ### 🚀 Tecnologias
 

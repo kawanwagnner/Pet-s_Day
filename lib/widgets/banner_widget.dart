@@ -13,7 +13,7 @@ class BannerWidget extends StatelessWidget {
           Container(
             height: 150,
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 255, 117, 120),
+              color: Colors.redAccent,
               borderRadius: BorderRadius.circular(15),
             ),
           ),
@@ -76,7 +76,7 @@ class BannerWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Join Our Animal Lovers Community',
+                  'Comunidade Amantes de Pets',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -93,7 +93,7 @@ class BannerWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  child: const Text('Continue'),
+                  child: const Text('Fazer parte'),
                 ),
               ],
             ),

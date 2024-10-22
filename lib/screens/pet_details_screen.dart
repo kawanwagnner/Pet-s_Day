@@ -128,7 +128,7 @@ class _PetDetailsScreenState extends State<PetDetailsScreen> {
                       const SizedBox(height: 5),
                       const Center(
                         child: Text(
-                          "Stadtmittel, Essen (5km)",
+                          "São Paulo, Brasil (7km)",
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey,
@@ -139,12 +139,12 @@ class _PetDetailsScreenState extends State<PetDetailsScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _buildInfoBox("Male", "Sex", Colors.red),
+                          _buildInfoBox("Macho", "Sexo", Colors.red),
                           _buildInfoBox(
-                              "${widget.age} Years", "Age", Colors.orange),
+                              "${widget.age} Anos", "Idade", Colors.orange),
                           _buildInfoBox(
                               "${widget.weight.toStringAsFixed(1)} kg",
-                              "Weight",
+                              "Peso",
                               Colors.purple),
                         ],
                       ),

@@ -163,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: const Text(
                         'Ver todos',
                         style: TextStyle(
-                          color: Colors.redAccent,
+                          color: Color.fromARGB(255, 252, 59, 59),
                           fontSize: 16,
                         ),
                       ),
@@ -223,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: FaIcon(
               FontAwesomeIcons.gears,
-              color: Colors.black,
+              color: Color(0xFF272626),
             ), // Ícone de configurações
             label: '',
           ),

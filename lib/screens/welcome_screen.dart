@@ -8,15 +8,13 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
               'assets/img/welcome.png',
               width: 700,
+              fit: BoxFit.cover, // Ajusta a imagem para preencher o espaço
             ),
-            const SizedBox(
-              height: 30,
-            ),
+            const SizedBox(height: 70),
             const SizedBox(
               width: 400,
               child: Text(
@@ -29,9 +27,6 @@ class WelcomeScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              height: 10,
-            ),
-            const SizedBox(
               width: 300,
               child: Text(
                 'Junte-se a nós e descubra o melhor pet próximo de você',
@@ -42,15 +37,13 @@ class WelcomeScreen extends StatelessWidget {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 foregroundColor: const Color(0xFFFFFFFF),
-                backgroundColor:
-                    const Color(0xFFFF6D6D), // Cor do texto no botão
+                backgroundColor: Colors.redAccent,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(30), // Bordas arredondadas
+                  borderRadius: BorderRadius.circular(30),
                 ),
-                elevation: 5, // Sombra do botão
+                elevation: 5,
               ),
               onPressed: () {
                 Navigator.pushNamed(context, '/home');

@@ -10,9 +10,24 @@ class CategoryChips extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Chip(label: Text('Gatos')),
-          Chip(label: Text('Cachorros')),
-          Chip(label: Text('Pássaros')),
+          Chip(
+            label: Text(
+              'Gatos',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          Chip(
+            label: Text(
+              'Cachorros',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          Chip(
+            label: Text(
+              'Pássaros',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
         ],
       ),
     );
