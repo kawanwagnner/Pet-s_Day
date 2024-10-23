@@ -46,7 +46,7 @@ class WelcomeScreen extends StatelessWidget {
                 elevation: 5,
               ),
               onPressed: () {
-                Navigator.pushNamed(context, '/signup');
+                Navigator.pushNamed(context, '/home');
               },
               child: const Text(
                 'Continuar',

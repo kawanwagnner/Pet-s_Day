@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatelessWidget {
-  final String email;
-  final String name;
-
-  const ProfilePage({super.key, required this.email, required this.name});
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,26 +23,26 @@ class ProfilePage extends StatelessWidget {
                   bottomRight: Radius.circular(40),
                 ),
               ),
-              child: Column(
+              child: const Column(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 60,
                     backgroundImage:
                         AssetImage("assets/img/profile-picture.png"),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   Text(
-                    name,
-                    style: const TextStyle(
+                    "Kawan",
+                    style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  SizedBox(height: 5),
                   Text(
-                    email,
-                    style: const TextStyle(
+                    "kawan@example.com",
+                    style: TextStyle(
                       fontSize: 16,
                       color: Colors.white70,
                     ),
@@ -57,7 +54,7 @@ class ProfilePage extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.person, color: Colors.redAccent),
               title: const Text("Nome"),
-              subtitle: Text(name),
+              subtitle: const Text("Name_example"),
               trailing: IconButton(
                 icon: const Icon(Icons.edit, color: Colors.redAccent),
                 onPressed: () {},
@@ -66,7 +63,7 @@ class ProfilePage extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.email, color: Colors.redAccent),
               title: const Text("Email"),
-              subtitle: Text(email),
+              subtitle: const Text("@example.com"),
               trailing: IconButton(
                 icon: const Icon(Icons.edit, color: Colors.redAccent),
                 onPressed: () {},

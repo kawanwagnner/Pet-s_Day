@@ -35,11 +35,16 @@ UI Pet Shop do serviço de adoção - Esse Projeto foi desenvolvido durante a um
 
 ### ✅ Demonstração
 
-<img src="assets\img\mostruario-petadopt\tela1-welcome.png" />
-<img src="assets\img\mostruario-petadopt\tela2-home.png" />
-<img src="assets\img\mostruario-petadopt\tela3-details.png" />
-<img src="assets\img\mostruario-petadopt\tela4-description.png" />
-<img src="assets\img\mostruario-petadopt\tela5-favs.png" />
+<img src="assets\img\mostruario-petadopt\tela1.png" />
+<img src="assets\img\mostruario-petadopt\tela2.png" />
+<img src="assets\img\mostruario-petadopt\tela3.png" />
+<img src="assets\img\mostruario-petadopt\tela4.png" />
+<img src="assets\img\mostruario-petadopt\tela5.png" />
+<img src="assets\img\mostruario-petadopt\tela6.png" />
+<img src="assets\img\mostruario-petadopt\tela7.png" />
+<img src="assets\img\mostruario-petadopt\tela8.png" />
+<img src="assets\img\mostruario-petadopt\tela9.png" />
+<img src="assets\img\mostruario-petadopt\tela10.png" />
 
 ### 🚀 Tecnologias
 

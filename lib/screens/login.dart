@@ -1,53 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:pet_adopt/screens/profile.dart';
+import 'package:pet_adopt/screens/home_screen.dart';
 import 'signup.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _emailOrNameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  final String registeredEmail = "email@example.com";
-  final String registeredPassword = "password123";
-  final String registeredName = "Nome de Exemplo"; // Nome do usuário registrado
-
   void _login() {
-    final String emailOrName = _emailOrNameController.text;
+    final String email = _emailController.text;
     final String password = _passwordController.text;
 
-    // Verifica se o campo de email/nome ou senha está vazio
-    if (emailOrName.isEmpty || password.isEmpty) {
+    // Validação do login com base nos dados armazenados
+    if (email.isEmpty || password.isEmpty) {
       _showError("Por favor, preencha todos os campos.");
       return;
     }
 
-    // Verifica se o valor inserido corresponde ao e-mail ou nome do usuário
-    if ((emailOrName != registeredEmail && emailOrName != registeredName)) {
-      // O erro pode estar aqui
-      _showError("E-mail ou nome incorreto.");
+    if (email != registeredEmail) {
+      _showError("E-mail incorreto.");
       return;
     }
 
-    // Verifica se a senha está correta
     if (password != registeredPassword) {
       _showError("Senha incorreta.");
       return;
     }
 
-    // Se as credenciais estiverem corretas, navega para a tela de perfil
+    // Se as credenciais estiverem corretas, navega para a tela inicial
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (context) =>
-            ProfilePage(email: registeredEmail, name: registeredName),
-      ),
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
     );
   }
 
@@ -90,10 +79,10 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 20),
             TextFormField(
-              controller: _emailOrNameController,
-              keyboardType: TextInputType.text,
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
-                labelText: "E-mail / Usuário",
+                labelText: "E-mail",
                 labelStyle: TextStyle(
                   color: Colors.black38,
                   fontWeight: FontWeight.w400,
@@ -132,17 +121,16 @@ class _LoginPageState extends State<LoginPage> {
               height: 60,
               alignment: Alignment.centerLeft,
               decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  stops: [0.3, 1],
-                  colors: [
-                    Color(0xFFF58524),
-                    Color(0xFFF92B7F),
-                  ],
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(5)),
-              ),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    stops: [0.3, 1],
+                    colors: [
+                      Color(0xFFF58524),
+                      Color(0xFFF92B7F),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(5))),
               child: SizedBox.expand(
                 child: TextButton(
                   onPressed: _login,
@@ -169,39 +157,39 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 10),
-            // Container(
-            //   height: 60,
-            //   alignment: Alignment.centerLeft,
-            //   decoration: const BoxDecoration(
-            //     color: Color(0xFF3C5A99),
-            //     borderRadius: BorderRadius.all(Radius.circular(5)),
-            //   ),
-            //   child: SizedBox.expand(
-            //     child: TextButton(
-            //       child: Row(
-            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //         children: <Widget>[
-            //           const Text(
-            //             "Login com Facebook",
-            //             style: TextStyle(
-            //               fontWeight: FontWeight.bold,
-            //               color: Colors.white,
-            //               fontSize: 20,
-            //             ),
-            //             textAlign: TextAlign.left,
-            //           ),
-            //           SizedBox(
-            //             height: 28,
-            //             width: 28,
-            //             child: Image.asset("assets/img/fb-icon.png"),
-            //           ),
-            //         ],
-            //       ),
-            //       onPressed: () {},
-            //     ),
-            //   ),
-            // ),
-            // const SizedBox(height: 10),
+            Container(
+              height: 60,
+              alignment: Alignment.centerLeft,
+              decoration: const BoxDecoration(
+                color: Color(0xFF3C5A99),
+                borderRadius: BorderRadius.all(Radius.circular(5)),
+              ),
+              child: SizedBox.expand(
+                child: TextButton(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      const Text(
+                        "Login com Facebook",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                      SizedBox(
+                        height: 28,
+                        width: 28,
+                        child: Image.asset("assets/img/fb-icon.png"),
+                      ),
+                    ],
+                  ),
+                  onPressed: () {},
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
             SizedBox(
               height: 40,
               child: TextButton(

@@ -83,6 +83,10 @@ class _HomeScreenState extends State<HomeScreen> {
       _selectedIndex = index;
     });
 
+    if (index == 3) {
+      Navigator.pushNamed(context, '/login'); // Navega para a tela de Favoritos
+    }
+
     if (index == 2) {
       Navigator.pushNamed(
           context, '/favorites'); // Navega para a tela de Favoritos

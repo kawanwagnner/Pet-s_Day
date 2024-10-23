@@ -44,11 +44,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case '/reset-password': // Rota Forgot Password
       return MaterialPageRoute(builder: (context) => const ResetPasswordPage());
     case '/profile': // Rota Forgot Password
-      return MaterialPageRoute(
-          builder: (context) => const ProfilePage(
-                email: '',
-                name: '',
-              ));
+      return MaterialPageRoute(builder: (context) => const ProfilePage());
     default:
       return MaterialPageRoute(builder: (context) => const HomeScreen());
   }
