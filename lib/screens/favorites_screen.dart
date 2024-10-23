@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pet_adopt/screens/pet_details_screen.dart';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
@@ -9,9 +10,6 @@ class FavoritesScreen extends StatefulWidget {
 }
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
-  // Lista de favoritos (no momento vazia)
-  List<String> favoritePets = [];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +20,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         elevation: 4,
       ),
       backgroundColor: const Color(0xFFFDE4E4),
-      body: favoritePets.isEmpty
+      body: PetDetailsScreen.favoritePets.isEmpty
           ? const Center(
               child: Text(
                 'Nenhum favorito',
@@ -33,81 +31,100 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               ),
             )
           : ListView.builder(
-              itemCount: favoritePets.length,
+              itemCount: PetDetailsScreen.favoritePets.length,
               itemBuilder: (context, index) {
+                final pet = PetDetailsScreen.favoritePets[index];
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                       vertical: 8.0, horizontal: 16.0),
-                  child: Card(
-                    elevation: 2,
-                    color: Colors.white, // Define a cor do card como branco
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Row(
-                      children: [
-                        // Imagem do pet (placeholder)
-                        Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(15),
-                              bottomLeft: Radius.circular(15),
-                            ),
-                            child: Image.network(
-                              'https://hugocalixto.com.br/wp-content/uploads/sites/20/2020/07/error-404-1.png',
-                              width: 120,
-                              height: 120,
-                              fit: BoxFit.cover,
-                            ),
+                  child: GestureDetector(
+                    onTap: () {
+                      // Navegar para a tela de detalhes do pet
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PetDetailsScreen(
+                            petName: pet['name'],
+                            imagePath: pet['imagePath'],
+                            age: pet['age'],
+                            weight: pet['weight'],
                           ),
                         ),
-                        const SizedBox(width: 15),
-                        // Espaço para texto (nome do pet e outras informações)
-                        const Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.all(10.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'nome pet', // Texto genérico
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  'Idade: 3 anos', // Informações de idade (placeholder)
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  'Peso: 5.6 kg', // Informações de peso (placeholder)
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
+                      );
+                    },
+                    child: Card(
+                      elevation: 2,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(15),
+                                bottomLeft: Radius.circular(15),
+                              ),
+                              child: Image.network(
+                                pet['imagePath'],
+                                width: 120,
+                                height: 120,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
-                        ),
-                        // Ícone de favorito (mantido no layout, mas sem funcionalidade)
-                        IconButton(
-                          icon: const Icon(
-                            Icons.favorite_border,
-                            color: Colors.red,
-                            size: 30,
+                          const SizedBox(width: 15),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    pet['name'],
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    'Idade: ${pet['age']} anos',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    'Peso: ${pet['weight'].toStringAsFixed(1)} kg',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                          onPressed: () {},
-                        ),
-                      ],
+                          IconButton(
+                            icon: const Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                              size: 30,
+                            ),
+                            onPressed: () {
+                              // Remover o pet da lista de favoritos
+                              setState(() {
+                                PetDetailsScreen.favoritePets.removeAt(index);
+                              });
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );

@@ -14,48 +14,57 @@ class PetDetailsScreen extends StatefulWidget {
     required this.weight,
   });
 
+  // Definindo a lista de favoritos como estática
+  static List<Map<String, dynamic>> favoritePets = [];
+
   @override
   // ignore: library_private_types_in_public_api
   _PetDetailsScreenState createState() => _PetDetailsScreenState();
 }
 
 class _PetDetailsScreenState extends State<PetDetailsScreen> {
-  bool isFavorited = false; // Variável que controla se o pet está favoritado
+  late bool isFavorited;
 
-  // Função para alternar o estado de favorito
+  @override
+  void initState() {
+    super.initState();
+    // Verifica se o pet está nos favoritos ao inicializar
+    isFavorited = PetDetailsScreen.favoritePets
+        .any((pet) => pet['name'] == widget.petName);
+  }
+
   void toggleFavorite() {
     setState(() {
       isFavorited = !isFavorited;
     });
 
-    // Salvar ou remover o pet da lista de favoritos
     if (isFavorited) {
-      // Salva o pet na lista de favoritos
       addPetToFavorites();
       showSnackBar("Pet favoritado com sucesso!");
     } else {
-      // Remove o pet da lista de favoritos
       removePetFromFavorites();
       showSnackBar("Pet removido dos favoritos.");
     }
   }
 
-  // Função para adicionar pet aos favoritos (essa função pode ser implementada com algum gerenciador de estado)
   void addPetToFavorites() {
-    // Aqui, você pode implementar um método que adiciona o pet a uma lista de favoritos
-    // Por exemplo, você pode usar o Provider, Riverpod ou Bloc para gerenciar o estado global.
-    // Por enquanto, vamos fazer um print apenas para simulação.
+    PetDetailsScreen.favoritePets.add({
+      'name': widget.petName,
+      'age': widget.age,
+      'weight': widget.weight,
+      'imagePath': widget.imagePath,
+    });
     // ignore: avoid_print
     print("Pet ${widget.petName} adicionado aos favoritos!");
   }
 
-  // Função para remover pet dos favoritos
   void removePetFromFavorites() {
+    PetDetailsScreen.favoritePets
+        .removeWhere((pet) => pet['name'] == widget.petName);
     // ignore: avoid_print
     print("Pet ${widget.petName} removido dos favoritos!");
   }
 
-  // Função para exibir o SnackBar com a mensagem de sucesso ou erro
   void showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

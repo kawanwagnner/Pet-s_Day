@@ -190,6 +190,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 30),
                 _buildFooter(),
+                const SizedBox(height: 30),
+                _buildFoot()
               ],
             ),
           ),
@@ -323,6 +325,21 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFoot() {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Divider(height: 1),
+        SizedBox(height: 16),
+        Text(
+          '© 2024 PetHouse. Todos os direitos reservados.',
+          style: TextStyle(color: Colors.grey),
+        ),
+        SizedBox(height: 16),
+      ],
     );
   }
 }
