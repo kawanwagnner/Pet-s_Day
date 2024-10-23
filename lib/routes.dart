@@ -56,7 +56,7 @@ Route<dynamic> _errorRoute() {
     builder: (context) => Scaffold(
       appBar: AppBar(title: const Text('Error')),
       body: const Center(
-          child: Text('Error: Missing arguments for PetDetailsScreen!')),
+          child: Text('Error: Erro ao carregar argumentos do petsDetalhes!')),
     ),
   );
 }
