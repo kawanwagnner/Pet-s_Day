@@ -46,10 +46,10 @@ class WelcomeScreen extends StatelessWidget {
                 elevation: 5,
               ),
               onPressed: () {
-                Navigator.pushNamed(context, '/home');
+                Navigator.pushNamed(context, '/signup');
               },
               child: const Text(
-                'Continue',
+                'Continuar',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pet_adopt/screens/login.dart';
+import 'package:pet_adopt/screens/reset-password.dart';
+import 'package:pet_adopt/screens/signUp.dart';
 import 'screens/welcome_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/pet_details_screen.dart';
@@ -31,8 +34,14 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       } else {
         return _errorRoute();
       }
-    case '/favorites': // Nova rota para a tela de favoritos
+    case '/favorites': // Rota para a tela de favoritos
       return MaterialPageRoute(builder: (context) => const FavoritesScreen());
+    case '/login': // Rota Login
+      return MaterialPageRoute(builder: (context) => const LoginPage());
+    case '/signup': // Rota SignUp
+      return MaterialPageRoute(builder: (context) => const SignupPage());
+    case '/reset-password': // Rota Forgot Password
+      return MaterialPageRoute(builder: (context) => const ResetPasswordPage());
     default:
       return MaterialPageRoute(builder: (context) => const HomeScreen());
   }

@@ -33,11 +33,25 @@ class _HomeScreenState extends State<HomeScreen> {
     'https://cdn.pixabay.com/photo/2018/11/02/15/54/cat-3790477_960_720.png', // Gato 10
   ];
 
-  // Lista de pets com informações dinâmicas
-  final List<Map<String, dynamic>> pets = List.generate(
-    10,
+  // Lista de nomes personalizados para os pets
+  final List<String> petName = [
+    'Rex', // Nome do pet 1
+    'Luna', // Nome do pet 2
+    'Bella', // Nome do pet 3
+    'Charlie', // Nome do pet 4
+    'Max', // Nome do pet 5
+    'Molly', // Nome do pet 6
+    'Oliver', // Nome do pet 7
+    'Coco', // Nome do pet 8
+    'Daisy', // Nome do pet 9
+    'Buddy', // Nome do pet 10
+  ];
+
+// Lista de pets com informações dinâmicas
+  late final List<Map<String, dynamic>> pets = List.generate(
+    petName.length, // Use o comprimento da lista de nomes
     (index) => {
-      'petName': 'Pet ${index + 1}', // Nome do pet dinâmico
+      'petName': petName[index], // Nome do pet personalizado
       'imagePath': '', // Caminho da imagem do pet
       'age': 2 + (index % 3), // Idade (exemplo de variação)
       'weight': 5.0 + (index % 3) * 2, // Peso (exemplo de variação)
@@ -190,8 +204,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 30),
                 _buildFooter(),
-                const SizedBox(height: 30),
-                _buildFoot()
               ],
             ),
           ),
@@ -325,21 +337,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildFoot() {
-    return const Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Divider(height: 1),
-        SizedBox(height: 16),
-        Text(
-          '© 2024 PetHouse. Todos os direitos reservados.',
-          style: TextStyle(color: Colors.grey),
-        ),
-        SizedBox(height: 16),
-      ],
     );
   }
 }
