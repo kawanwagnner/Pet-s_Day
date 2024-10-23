@@ -28,6 +28,9 @@
 - [x] Detalhes
 - [x] Favoritos
 - [x] Tela de Bem-vindo
+- [x] Login
+- [x] Cadastro
+- [x] Esqueci minha senha
 
 ### 💻 Projeto
 
