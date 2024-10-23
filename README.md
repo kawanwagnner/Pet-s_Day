@@ -55,9 +55,9 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
 
 - Fluter
 
-### 📕 Bibliotecas
+### 📕 Design Utilizado
 
-...
+https://www.figma.com/design/aVGyP82hRqrdlkcm94RASo/Pet-Adoption-App-(Community)?node-id=0-1&node-type=canvas&t=Dc9l2FpY1ds9Ikuv-0
 
 ### ⚖ Direitos
 
