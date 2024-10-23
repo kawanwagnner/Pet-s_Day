@@ -87,6 +87,11 @@ class _HomeScreenState extends State<HomeScreen> {
       Navigator.pushNamed(
           context, '/favorites'); // Navega para a tela de Favoritos
     }
+
+    if (index == 1) {
+      Navigator.pushNamed(
+          context, '/profile'); // Navega para a tela de Favoritos
+    }
   }
 
   @override

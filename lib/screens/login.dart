@@ -1,10 +1,71 @@
 import 'package:flutter/material.dart';
-
-import 'reset-password.dart';
+import 'package:pet_adopt/screens/profile.dart';
 import 'signup.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  final String registeredEmail = "email@example.com";
+  final String registeredPassword = "password123";
+  final String userName = "Nome de Exemplo"; // Nome do usuário registrado
+
+  void _login() {
+    final String email = _emailController.text;
+    final String password = _passwordController.text;
+
+    // Validação do login com base nos dados armazenados
+    if (email.isEmpty || password.isEmpty) {
+      _showError("Por favor, preencha todos os campos.");
+      return;
+    }
+
+    if (email != registeredEmail) {
+      _showError("E-mail incorreto.");
+      return;
+    }
+
+    if (password != registeredPassword) {
+      _showError("Senha incorreta.");
+      return;
+    }
+
+    // Se as credenciais estiverem corretas, navega para a tela de perfil
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProfilePage(email: email, name: userName),
+      ),
+    );
+  }
+
+  void _showError(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Erro de Login"),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +84,9 @@ class LoginPage extends StatelessWidget {
               height: 128,
               child: Image.asset("assets/img/logo.png"),
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             TextFormField(
+              controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: "E-mail",
@@ -36,14 +96,11 @@ class LoginPage extends StatelessWidget {
                   fontSize: 20,
                 ),
               ),
-              style: const TextStyle(
-                fontSize: 20,
-              ),
+              style: const TextStyle(fontSize: 20),
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             TextFormField(
+              controller: _passwordController,
               keyboardType: TextInputType.text,
               obscureText: true,
               decoration: const InputDecoration(
@@ -54,28 +111,19 @@ class LoginPage extends StatelessWidget {
                   fontSize: 20,
                 ),
               ),
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
             ),
             Container(
               height: 40,
               alignment: Alignment.centerRight,
               child: TextButton(
-                child: const Text(
-                  "Recuperar Senha",
-                ),
+                child: const Text("Recuperar Senha"),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ResetPasswordPage(),
-                    ),
-                  );
+                  Navigator.pushNamed(context, '/reset-password');
                 },
               ),
             ),
-            const SizedBox(
-              height: 40,
-            ),
+            const SizedBox(height: 40),
             Container(
               height: 60,
               alignment: Alignment.centerLeft,
@@ -89,11 +137,10 @@ class LoginPage extends StatelessWidget {
                       Color(0xFFF92B7F),
                     ],
                   ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(5),
-                  )),
+                  borderRadius: BorderRadius.all(Radius.circular(5))),
               child: SizedBox.expand(
                 child: TextButton(
+                  onPressed: _login,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -113,21 +160,16 @@ class LoginPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  onPressed: () => {},
                 ),
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             Container(
               height: 60,
               alignment: Alignment.centerLeft,
               decoration: const BoxDecoration(
                 color: Color(0xFF3C5A99),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(5),
-                ),
+                borderRadius: BorderRadius.all(Radius.circular(5)),
               ),
               child: SizedBox.expand(
                 child: TextButton(
@@ -154,25 +196,24 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             SizedBox(
-                height: 40,
-                child: TextButton(
-                  child: const Text(
-                    "Cadastre-se",
-                    textAlign: TextAlign.center,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SignupPage(),
-                      ),
-                    );
-                  },
-                )),
+              height: 40,
+              child: TextButton(
+                child: const Text(
+                  "Cadastre-se",
+                  textAlign: TextAlign.center,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SignupPage(),
+                    ),
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),

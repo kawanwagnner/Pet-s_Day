@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pet_adopt/screens/login.dart';
+import 'package:pet_adopt/screens/profile.dart';
 import 'package:pet_adopt/screens/reset-password.dart';
 import 'package:pet_adopt/screens/signUp.dart';
 import 'screens/welcome_screen.dart';
@@ -42,6 +43,12 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => const SignupPage());
     case '/reset-password': // Rota Forgot Password
       return MaterialPageRoute(builder: (context) => const ResetPasswordPage());
+    case '/profile': // Rota Forgot Password
+      return MaterialPageRoute(
+          builder: (context) => const ProfilePage(
+                email: '',
+                name: '',
+              ));
     default:
       return MaterialPageRoute(builder: (context) => const HomeScreen());
   }
