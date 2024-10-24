@@ -61,7 +61,7 @@ https://www.figma.com/design/aVGyP82hRqrdlkcm94RASo/Pet-Adoption-App-(Community)
 
 ### ⚖ Direitos
 
-Todos direitos são reservados a Netflix e ao The Movie Database.
+Todos direitos são reservados ao Kawan Wagnner, desenvolvedor do projeto.
 
 ### 📝 Licença
 
