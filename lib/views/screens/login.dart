@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pet_adopt/screens/home_screen.dart';
-import 'signup.dart';
+import 'package:pet_adopt/controllers/login_controller.dart';
+import 'package:pet_adopt/views/screens/home_screen.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -10,34 +10,24 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final AuthController _authController = AuthController();
 
-  void _login() {
-    final String email = _emailController.text;
-    final String password = _passwordController.text;
-
-    // Validação do login com base nos dados armazenados
-    if (email.isEmpty || password.isEmpty) {
-      _showError("Por favor, preencha todos os campos.");
-      return;
+  void _login() async {
+    try {
+      // Tenta fazer o login
+      bool isLoggedIn = await _authController.login();
+      if (isLoggedIn) {
+        // Se o login for bem-sucedido, navega para a HomeScreen
+        Navigator.pushReplacement(
+          // ignore: use_build_context_synchronously
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
+    } catch (error) {
+      // Exibe o erro caso ocorra alguma falha
+      _showError(error.toString());
     }
-
-    if (email != registeredEmail) {
-      _showError("E-mail incorreto.");
-      return;
-    }
-
-    if (password != registeredPassword) {
-      _showError("Senha incorreta.");
-      return;
-    }
-
-    // Se as credenciais estiverem corretas, navega para a tela inicial
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const HomeScreen()),
-    );
   }
 
   void _showError(String message) {
@@ -79,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 20),
             TextFormField(
-              controller: _emailController,
+              controller: _authController.emailController,
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: "E-mail",
@@ -93,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 10),
             TextFormField(
-              controller: _passwordController,
+              controller: _authController.passwordController,
               keyboardType: TextInputType.text,
               obscureText: true,
               decoration: const InputDecoration(
@@ -198,12 +188,7 @@ class _LoginPageState extends State<LoginPage> {
                   textAlign: TextAlign.center,
                 ),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SignupPage(),
-                    ),
-                  );
+                  Navigator.pushNamed(context, '/signup');
                 },
               ),
             ),

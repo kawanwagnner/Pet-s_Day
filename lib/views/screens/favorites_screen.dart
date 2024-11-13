@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pet_adopt/screens/pet_details_screen.dart';
+import 'package:pet_adopt/views/screens/pet_details_screen.dart';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});

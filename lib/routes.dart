@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:pet_adopt/screens/login.dart';
-import 'package:pet_adopt/screens/profile.dart';
-import 'package:pet_adopt/screens/reset-password.dart';
-import 'package:pet_adopt/screens/signUp.dart';
-import 'screens/welcome_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/pet_details_screen.dart';
-import 'screens/favorites_screen.dart'; // Adicione a importação da tela de favoritos
+import 'package:pet_adopt/views/screens/login.dart';
+import 'package:pet_adopt/views/screens/profile.dart';
+import 'package:pet_adopt/views/screens/reset-password.dart';
+import 'package:pet_adopt/views/screens/signup.dart';
+import 'views/screens/welcome_screen.dart';
+import 'views/screens/home_screen.dart';
+import 'views/screens/pet_details_screen.dart';
+import 'views/screens/favorites_screen.dart'; // Adicione a importação da tela de favoritos
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {

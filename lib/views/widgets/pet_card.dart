@@ -5,7 +5,7 @@ class PetCard extends StatelessWidget {
   final String imagePath;
   final int age;
   final double weight;
-  final VoidCallback onTap; // Corrigido para usar VoidCallback
+  final VoidCallback onTap;
 
   const PetCard({
     super.key,
@@ -13,13 +13,13 @@ class PetCard extends StatelessWidget {
     required this.imagePath,
     required this.age,
     required this.weight,
-    required this.onTap, // Corrigido
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap, // Aqui o onTap é passado diretamente
+      onTap: onTap,
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         margin: const EdgeInsets.all(10),
