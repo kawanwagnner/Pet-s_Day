@@ -130,8 +130,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemCount: _controller.pets.length,
                     itemBuilder: (context, index) {
                       final pet = _controller.pets[index];
-                      return _buildPetCard(context, pet['petName'],
-                          pet['imagePath'], pet['age'], pet['weight']);
+                      return _buildPetCard(
+                        context,
+                        pet['petName'] ?? 'Sem Nome',
+                        [pet['imagePath']],
+                        pet['age'] ?? 0,
+                        pet['weight'] ?? 0.0,
+                      );
                     },
                   ),
                 ),
@@ -171,8 +176,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildPetCard(BuildContext context, String petName, String? imagePath,
-      int age, int weight) {
+  Widget _buildPetCard(BuildContext context, String petName,
+      List<String> imagePaths, int age, double weight) {
+    final String imagePath =
+        imagePaths.isNotEmpty && imagePaths.first.isNotEmpty
+            ? imagePaths.first
+            : 'assets/img/default_image.png';
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Transform.scale(
@@ -181,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
           width: MediaQuery.of(context).size.width * 0.75,
           child: PetCard(
             petName: petName,
-            imagePath: imagePath ?? 'assets/img/default_image.png',
+            imagePath: imagePath,
             age: age,
             weight: weight,
             onTap: () {
@@ -192,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   'petName': petName,
                   'imagePath': imagePath,
                   'age': age,
-                  'weight': weight
+                  'weight': weight,
                 },
               );
             },
