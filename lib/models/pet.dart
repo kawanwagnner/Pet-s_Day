@@ -2,7 +2,7 @@ class Pet {
   final String id;
   final String name;
   final int age;
-  final int weight;
+  final double weight;
   final String imagePath;
 
   Pet({
@@ -20,7 +20,7 @@ class Pet {
       name: json['name'],
       age: json['age'],
       weight: json['weight'],
-      imagePath: json['imagePath'],
+      imagePath: json['imagePath'] is String ? json['imagePath'] : '',
     );
   }
 

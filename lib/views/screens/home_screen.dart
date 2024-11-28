@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadPets() async {
     await _controller.fetchPets();
-    setState(() {}); // Atualiza o estado para renderizar os pets carregados
+    setState(() {});
   }
 
   @override
@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -82,13 +82,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       children: [
                         IconButton(
+                          // ignore: deprecated_member_use
                           icon: const FaIcon(FontAwesomeIcons.searchengin,
                               size: 25),
-                          onPressed: () {},
+                          onPressed: () {
+                            // Implementar busca
+                          },
                         ),
                         IconButton(
                           icon: const FaIcon(FontAwesomeIcons.bell, size: 25),
-                          onPressed: () {},
+                          onPressed: () {
+                            // Implementar notificações
+                          },
                         ),
                       ],
                     ),
@@ -112,7 +117,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // Implementar "Ver todos"
+                      },
                       child: const Text(
                         'Ver todos',
                         style: TextStyle(
@@ -133,9 +140,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       return _buildPetCard(
                         context,
                         pet['petName'] ?? 'Sem Nome',
-                        [pet['imagePath']],
+                        pet['imagePath'] ?? '',
                         pet['age'] ?? 0,
-                        pet['weight'] ?? 0.0,
+                        (pet['weight'] ?? 0.0).toDouble(),
                       );
                     },
                   ),
@@ -176,12 +183,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildPetCard(BuildContext context, String petName,
-      List<String> imagePaths, int age, double weight) {
-    final String imagePath =
-        imagePaths.isNotEmpty && imagePaths.first.isNotEmpty
-            ? imagePaths.first
-            : 'assets/img/default_image.png';
+  Widget _buildPetCard(BuildContext context, String petName, String imagePath,
+      int age, double weight) {
+    final String image =
+        imagePath.isNotEmpty ? imagePath : 'assets/img/default_image.png';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -191,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
           width: MediaQuery.of(context).size.width * 0.75,
           child: PetCard(
             petName: petName,
-            imagePath: imagePath,
+            imagePath: image,
             age: age,
             weight: weight,
             onTap: () {
@@ -200,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 '/petDetails',
                 arguments: {
                   'petName': petName,
-                  'imagePath': imagePath,
+                  'imagePath': image,
                   'age': age,
                   'weight': weight,
                 },

@@ -2,35 +2,41 @@ import 'package:flutter/material.dart';
 
 class PetDetailsScreen extends StatefulWidget {
   final String petName;
-  final String imagePath;
+  final List<String> imagePaths; // Lista de imagens
   final int age;
   final double weight;
 
   const PetDetailsScreen({
     super.key,
     required this.petName,
-    required this.imagePath,
+    required this.imagePaths, // Recebe várias imagens
     required this.age,
     required this.weight,
+    required imagePath,
   });
 
-  // Definindo a lista de favoritos como estática
   static List<Map<String, dynamic>> favoritePets = [];
 
   @override
-  // ignore: library_private_types_in_public_api
   _PetDetailsScreenState createState() => _PetDetailsScreenState();
 }
 
 class _PetDetailsScreenState extends State<PetDetailsScreen> {
   late bool isFavorited;
+  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
-    // Verifica se o pet está nos favoritos ao inicializar
     isFavorited = PetDetailsScreen.favoritePets
         .any((pet) => pet['name'] == widget.petName);
+    _pageController = PageController(); // Controlador para o carrossel
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   void toggleFavorite() {
@@ -52,16 +58,14 @@ class _PetDetailsScreenState extends State<PetDetailsScreen> {
       'name': widget.petName,
       'age': widget.age,
       'weight': widget.weight,
-      'imagePath': widget.imagePath,
+      'imagePaths': widget.imagePaths,
     });
-    // ignore: avoid_print
     print("Pet ${widget.petName} adicionado aos favoritos!");
   }
 
   void removePetFromFavorites() {
     PetDetailsScreen.favoritePets
         .removeWhere((pet) => pet['name'] == widget.petName);
-    // ignore: avoid_print
     print("Pet ${widget.petName} removido dos favoritos!");
   }
 
@@ -76,28 +80,27 @@ class _PetDetailsScreenState extends State<PetDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String displayedImagePath = widget.imagePath;
-    if (widget.imagePath.contains('dog2.png')) {
-      displayedImagePath = 'assets/img/dog.png';
-    } else if (widget.imagePath.contains('cat2.png')) {
-      displayedImagePath = 'assets/img/cat.png';
-    }
-
     return Scaffold(
       backgroundColor: const Color(0xFFFDE4E4),
       body: Stack(
         children: [
+          // Carrossel de imagens
           Positioned(
             top: 0,
             left: 0,
             right: 0,
-            child: Container(
+            child: SizedBox(
               height: 350,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(displayedImagePath),
-                  fit: BoxFit.cover,
-                ),
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: widget.imagePaths.length,
+                itemBuilder: (context, index) {
+                  final imagePath = widget.imagePaths[index];
+                  return Image.network(
+                    imagePath,
+                    fit: BoxFit.cover,
+                  );
+                },
               ),
             ),
           ),
@@ -185,12 +188,11 @@ class _PetDetailsScreenState extends State<PetDetailsScreen> {
                       ),
                       const SizedBox(height: 15),
                       const Text(
-                        "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).",
+                        "Aqui você encontrará mais detalhes sobre o pet. Descubra o que faz deste pet tão especial.",
                         style: TextStyle(fontSize: 16),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 15),
-                      // Botão "Favoritar"
                       Center(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(

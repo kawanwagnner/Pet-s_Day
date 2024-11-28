@@ -48,6 +48,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                             imagePath: pet['imagePath'],
                             age: pet['age'],
                             weight: pet['weight'],
+                            imagePaths: const [],
                           ),
                         ),
                       );
