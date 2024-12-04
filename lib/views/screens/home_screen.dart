@@ -15,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final HomeController _controller = HomeController();
+  bool _isLoading = true; // Indicador de carregamento
 
   @override
   void initState() {
@@ -24,7 +25,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadPets() async {
     await _controller.fetchPets();
-    setState(() {});
+    setState(() {
+      _isLoading = false; // Carregamento concluído
+    });
   }
 
   @override
@@ -82,7 +85,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       children: [
                         IconButton(
-                          // ignore: deprecated_member_use
                           icon: const FaIcon(FontAwesomeIcons.searchengin,
                               size: 25),
                           onPressed: () {
@@ -130,23 +132,36 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                SizedBox(
-                  height: 250,
-                  child: PageView.builder(
-                    controller: _controller.pageController,
-                    itemCount: _controller.pets.length,
-                    itemBuilder: (context, index) {
-                      final pet = _controller.pets[index];
-                      return _buildPetCard(
-                        context,
-                        pet['petName'] ?? 'Sem Nome',
-                        pet['imagePath'] ?? '',
-                        pet['age'] ?? 0,
-                        (pet['weight'] ?? 0.0).toDouble(),
-                      );
-                    },
-                  ),
-                ),
+                // Condicional para exibir conteúdo baseado no estado de carregamento e na lista de pets
+                _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : (_controller.pets.isEmpty
+                        ? const Center(
+                            child: Text(
+                              "Sem pets disponíveis",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )
+                        : SizedBox(
+                            height: 250,
+                            child: PageView.builder(
+                              controller: _controller.pageController,
+                              itemCount: _controller.pets.length,
+                              itemBuilder: (context, index) {
+                                final pet = _controller.pets[index];
+                                return _buildPetCard(
+                                  context,
+                                  pet['petName'] ?? 'Sem Nome',
+                                  pet['imagePath'] ?? '',
+                                  pet['age'] ?? 0,
+                                  (pet['weight'] ?? 0.0).toDouble(),
+                                );
+                              },
+                            ),
+                          )),
                 const SizedBox(height: 30),
                 _buildFooter(),
               ],
@@ -185,8 +200,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildPetCard(BuildContext context, String petName, String imagePath,
       int age, double weight) {
-    final String image =
-        imagePath.isNotEmpty ? imagePath : 'assets/img/default_image.png';
+    final String image = imagePath.isNotEmpty
+        ? imagePath
+        : 'https://github.com/kawanwagnner/Pet-s_Day/blob/main/assets/img/default_image.png?raw=true';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -266,8 +282,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () {},
               ),
               IconButton(
-                icon: const FaIcon(FontAwesomeIcons.xTwitter,
-                    color: Colors.white),
+                icon:
+                    const FaIcon(FontAwesomeIcons.twitter, color: Colors.white),
                 onPressed: () {},
               ),
             ],

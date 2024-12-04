@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class PetDetailsScreen extends StatefulWidget {
@@ -164,7 +165,8 @@ class _PetDetailsScreenState extends State<PetDetailsScreen> {
                       const Divider(),
                       ListTile(
                         leading: const CircleAvatar(
-                          backgroundImage: AssetImage('assets/img/profile.png'),
+                          backgroundImage: AssetImage(
+                              'https://github.com/kawanwagnner/Pet-s_Day/blob/main/assets/img/default_image.png?raw=true'),
                           radius: 30,
                         ),
                         title: const Text(
@@ -264,5 +266,14 @@ class _PetDetailsScreenState extends State<PetDetailsScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<PageController>(
+        '_pageController', _pageController));
+    properties.add(DiagnosticsProperty<PageController>(
+        '_pageController', _pageController));
   }
 }

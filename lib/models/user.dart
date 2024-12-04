@@ -1,33 +1,35 @@
 class User {
-  final String id;
-  final String name;
-  final String email;
-  final int age;
+  String? name;
+  String? email;
+  String? phone;
+  String? password;
+  String? confirmpassword;
 
   User({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.age,
+    this.name,
+    this.email,
+    this.phone,
+    this.password,
+    this.confirmpassword,
   });
 
-  // Método para converter um objeto JSON em um User
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      age: json['age'],
-    );
-  }
-
-  // Método para converter um User em um objeto JSON
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'name': name,
-      'email': email,
-      'age': age,
+      "name": name,
+      "email": email,
+      "phone": phone,
+      "password": password,
+      "confirmpassword": confirmpassword,
     };
+  }
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      name: json["name"],
+      email: json["email"],
+      phone: json["phone"],
+      password: json["password"],
+      confirmpassword: json["confirmpassword"], // A confirmação de senha
+    );
   }
 }

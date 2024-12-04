@@ -1,9 +1,6 @@
+// signup_page.dart
 import 'package:flutter/material.dart';
-
-// Variáveis globais para simular armazenamento de dados (em um projeto real, use um banco de dados seguro)
-String? registeredEmail;
-String? registeredPassword;
-String? registeredName;
+import 'package:pet_adopt/controllers/signup_controller.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -14,83 +11,57 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final SignupController _signupController = SignupController();
+  bool _isLoading = false; // Indicador de carregamento
 
-  void _register() {
-    final String name = _nameController.text;
-    final String email = _emailController.text;
-    final String password = _passwordController.text;
-
-    // Validação simples
-    if (name.isEmpty || email.isEmpty || password.isEmpty) {
-      _showError("Por favor, preencha todos os campos.");
-      return;
-    }
-
-    if (name.length < 3) {
-      _showError("O nome deve ter pelo menos 3 caracteres.");
-      return;
-    }
-
-    if (password.length < 6) {
-      _showError("A senha deve ter pelo menos 6 caracteres.");
-      return;
-    }
-
-    // Salva as informações nos "dados de cadastro"
-    registeredName = name;
-    registeredEmail = email;
-    registeredPassword = password;
-
-    // Limpa os campos após o cadastro
-    _nameController.clear();
-    _emailController.clear();
-    _passwordController.clear();
-
-    // Exibe mensagem de sucesso e redireciona para a tela de login
-    _showSuccess();
+  @override
+  void dispose() {
+    _signupController.dispose();
+    super.dispose();
   }
 
-  void _showError(String message) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Erro de Cadastro"),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+  void _handleSignup() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      bool success = await _signupController.signup();
+      if (success) {
+        // Exibe mensagem de sucesso
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Cadastro realizado com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
         );
-      },
-    );
+        // Redireciona para a tela de login após um breve atraso para que o usuário veja a mensagem
+        await Future.delayed(const Duration(seconds: 2));
+        Navigator.pushReplacementNamed(context, '/login');
+      }
+    } catch (e) {
+      // Exibe mensagem de erro
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
-  void _showSuccess() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Cadastro Concluído"),
-          content: const Text("Seu cadastro foi realizado com sucesso!"),
-          actions: <Widget>[
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.popAndPushNamed(context, '/login');
-              },
-            ),
-          ],
-        );
-      },
+  // Função para selecionar imagem de perfil (Implementação futura)
+  void _selectProfileImage() {
+    // Implementar seleção de imagem se necessário
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Seleção de imagem ainda não implementada.'),
+        backgroundColor: Colors.blue,
+      ),
     );
   }
 
@@ -137,18 +108,18 @@ class _SignupPageState extends State<SignupPage> {
                 ),
                 child: SizedBox.expand(
                   child: TextButton(
+                    onPressed: _selectProfileImage,
                     child: const Icon(
                       Icons.add,
                       color: Colors.white,
                     ),
-                    onPressed: () {},
                   ),
                 ),
               ),
             ),
             const SizedBox(height: 20),
             TextFormField(
-              controller: _nameController,
+              controller: _signupController.nameController,
               keyboardType: TextInputType.text,
               decoration: const InputDecoration(
                 labelText: "Nome",
@@ -162,7 +133,7 @@ class _SignupPageState extends State<SignupPage> {
             ),
             const SizedBox(height: 10),
             TextFormField(
-              controller: _emailController,
+              controller: _signupController.emailController,
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: "E-mail",
@@ -176,11 +147,40 @@ class _SignupPageState extends State<SignupPage> {
             ),
             const SizedBox(height: 10),
             TextFormField(
-              controller: _passwordController,
+              controller: _signupController.phoneController,
+              keyboardType: TextInputType.phone,
+              decoration: const InputDecoration(
+                labelText: "Telefone",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+              style: const TextStyle(fontSize: 20),
+            ),
+            const SizedBox(height: 10),
+            TextFormField(
+              controller: _signupController.passwordController,
               keyboardType: TextInputType.text,
               obscureText: true,
               decoration: const InputDecoration(
                 labelText: "Senha",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+              style: const TextStyle(fontSize: 20),
+            ),
+            const SizedBox(height: 10),
+            TextFormField(
+              controller: _signupController.confirmPasswordController,
+              keyboardType: TextInputType.text,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: "Confirmar Senha",
                 labelStyle: TextStyle(
                   color: Colors.black38,
                   fontWeight: FontWeight.w400,
@@ -208,17 +208,26 @@ class _SignupPageState extends State<SignupPage> {
                 ),
               ),
               child: SizedBox.expand(
-                child: TextButton(
-                  onPressed: _register,
-                  child: const Text(
-                    "Cadastrar",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                    textAlign: TextAlign.center,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
                   ),
+                  onPressed: _isLoading ? null : _handleSignup,
+                  child: _isLoading
+                      ? const CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        )
+                      : const Text(
+                          "Cadastrar",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                 ),
               ),
             ),

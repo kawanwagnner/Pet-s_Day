@@ -29,7 +29,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
             petName: args['petName'],
             imagePath: args['imagePath'],
             age: args['age'], // Passa a idade correta
-            weight: args['weight'], // Passa o peso correto
+            weight: args['weight'],
+            imagePaths: const [], // Passa o peso correto
           ),
         );
       } else {

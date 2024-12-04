@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 class HomeController {
   final PageController pageController = PageController(
     viewportFraction: 0.75,
@@ -9,6 +13,20 @@ class HomeController {
 
   int selectedIndex = 0;
   List<Map<String, dynamic>> pets = [];
+
+  // URL da imagem padrão
+  static const String defaultImageUrl =
+      'https://github.com/kawanwagnner/Pet-s_Day/blob/main/assets/img/default_image.png?raw=true';
+
+  // Função para validar URLs
+  bool isValidUrl(String url) {
+    try {
+      final uri = Uri.parse(url);
+      return uri.hasScheme && uri.hasAuthority;
+    } catch (e) {
+      return false;
+    }
+  }
 
   Future<void> fetchPets() async {
     try {
@@ -21,8 +39,6 @@ class HomeController {
 
         pets = data.map((item) {
           final images = item['images'];
-          print(images);
-          print("=============================================");
           String? firstImage;
 
           // Verificar se 'images' é uma lista ou uma string
@@ -34,19 +50,43 @@ class HomeController {
             }
           }
 
+          // Se não houver imagem válida ou URL inválido, atribui a imagem padrão
+          if (firstImage == null ||
+              firstImage.isEmpty ||
+              !isValidUrl(firstImage)) {
+            firstImage = defaultImageUrl;
+          }
+
           return {
             'petName': item['name'],
-            'imagePath': firstImage ?? '',
+            'imagePath': firstImage,
             'age': item['age'],
             'weight': item['weight'],
             'available': item['available']
           };
         }).toList();
+      } else if (response.statusCode >= 400 && response.statusCode < 600) {
+        // Para qualquer erro de cliente (4xx) ou servidor (5xx), lança uma exceção
+        print(
+            'Erro ${response.statusCode}: Acesso proibido ou recurso não encontrado.');
+        throw Exception(
+            'Erro ${response.statusCode}: Acesso proibido ou recurso não encontrado. Imagem padrão será exibida.');
       } else {
-        throw Exception('Falha ao carregar os dados dos pets');
+        throw Exception(
+            'Falha ao carregar os dados dos pets. Status: ${response.statusCode}');
       }
     } catch (e) {
       print('Erro ao carregar pets: $e');
+      // Caso ocorra algum erro, definir a imagem padrão
+      pets = [
+        {
+          'petName': 'Erro ao carregar pets',
+          'imagePath': defaultImageUrl,
+          'age': 'Desconhecida',
+          'weight': 'Desconhecido',
+          'available': false
+        }
+      ];
     }
   }
 
@@ -110,27 +150,49 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (pet['imagePath'] != null)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: Image.network(
-                            pet['imagePath'],
-                            height: 200,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      else
-                        Container(
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.network(
+                          pet['imagePath'],
                           height: 200,
                           width: double.infinity,
-                          color: Colors.grey[300],
-                          child: const Icon(
-                            Icons.pets,
-                            size: 50,
-                            color: Colors.grey,
-                          ),
+                          fit: BoxFit.cover,
+                          // Adiciona o errorBuilder para tratar erros de carregamento
+                          errorBuilder: (BuildContext context, Object exception,
+                              StackTrace? stackTrace) {
+                            // Log do erro para depuração
+                            print(
+                                'Erro ao carregar a imagem: ${pet['imagePath']}. Erro: $exception');
+
+                            // Retorna a imagem padrão definida no HomeController
+                            return Image.network(
+                              HomeController.defaultImageUrl,
+                              height: 200,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                              // Opcional: Adiciona um errorBuilder para a imagem padrão, caso também falhe
+                              errorBuilder: (BuildContext context,
+                                  Object exception, StackTrace? stackTrace) {
+                                // Log do erro ao carregar a imagem padrão
+                                print(
+                                    'Erro ao carregar a imagem padrão. Erro: $exception');
+
+                                // Retorna um ícone como fallback final
+                                return Container(
+                                  height: 200,
+                                  width: double.infinity,
+                                  color: Colors.grey[300],
+                                  child: const Icon(
+                                    Icons.pets,
+                                    size: 50,
+                                    color: Colors.grey,
+                                  ),
+                                );
+                              },
+                            );
+                          },
                         ),
+                      ),
                       const SizedBox(height: 8),
                       Text(
                         pet['petName'] ?? 'Sem nome',
