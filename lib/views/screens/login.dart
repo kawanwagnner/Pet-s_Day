@@ -1,4 +1,6 @@
 // login_page.dart
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:pet_adopt/controllers/login_controller.dart';
 import 'package:pet_adopt/views/screens/home_screen.dart';
@@ -77,7 +79,6 @@ class _LoginPageState extends State<LoginPage> {
     bool isLoggedIn = await _authController.isLoggedIn();
     if (isLoggedIn) {
       Navigator.pushReplacement(
-        // ignore: use_build_context_synchronously
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
