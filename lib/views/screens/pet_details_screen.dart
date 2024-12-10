@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class PetDetailsScreen extends StatefulWidget {
@@ -29,9 +28,11 @@ class _PetDetailsScreenState extends State<PetDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    // Log para verificar imagens recebidas
+    debugPrint("Imagens recebidas: ${widget.imagePaths}");
     isFavorited = PetDetailsScreen.favoritePets
         .any((pet) => pet['name'] == widget.petName);
-    _pageController = PageController(); // Controlador para o carrossel
+    _pageController = PageController();
   }
 
   @override
@@ -61,13 +62,13 @@ class _PetDetailsScreenState extends State<PetDetailsScreen> {
       'weight': widget.weight,
       'imagePaths': widget.imagePaths,
     });
-    print("Pet ${widget.petName} adicionado aos favoritos!");
+    debugPrint("Pet ${widget.petName} adicionado aos favoritos!");
   }
 
   void removePetFromFavorites() {
     PetDetailsScreen.favoritePets
         .removeWhere((pet) => pet['name'] == widget.petName);
-    print("Pet ${widget.petName} removido dos favoritos!");
+    debugPrint("Pet ${widget.petName} removido dos favoritos!");
   }
 
   void showSnackBar(String message) {
@@ -90,20 +91,37 @@ class _PetDetailsScreenState extends State<PetDetailsScreen> {
             top: 0,
             left: 0,
             right: 0,
-            child: SizedBox(
-              height: 350,
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: widget.imagePaths.length,
-                itemBuilder: (context, index) {
-                  final imagePath = widget.imagePaths[index];
-                  return Image.network(
-                    imagePath,
-                    fit: BoxFit.cover,
-                  );
-                },
-              ),
-            ),
+            child: widget.imagePaths.isNotEmpty
+                ? SizedBox(
+                    height: 350,
+                    child: PageView.builder(
+                      controller: _pageController,
+                      itemCount: widget.imagePaths.length,
+                      itemBuilder: (context, index) {
+                        final imagePath = widget.imagePaths[index];
+                        debugPrint("Tentando carregar imagem: $imagePath");
+                        return Image.network(
+                          imagePath,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                            color: Colors.grey.shade300,
+                            child: const Icon(Icons.broken_image, size: 50),
+                          ),
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          },
+                        );
+                      },
+                    ),
+                  )
+                : Container(
+                    height: 350,
+                    color: Colors.grey.shade300,
+                    child: const Icon(Icons.broken_image, size: 50),
+                  ),
           ),
           SingleChildScrollView(
             child: Column(
@@ -164,26 +182,29 @@ class _PetDetailsScreenState extends State<PetDetailsScreen> {
                       const SizedBox(height: 15),
                       const Divider(),
                       ListTile(
-                        leading: const CircleAvatar(
-                          backgroundImage: AssetImage(
-                              'https://github.com/kawanwagnner/Pet-s_Day/blob/main/assets/img/default_image.png?raw=true'),
-                          radius: 30,
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.grey.shade300,
+                          child: const Icon(Icons.person, color: Colors.black),
                         ),
                         title: const Text(
                           'Hana',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        subtitle: const Text('Lucky Owner'),
+                        subtitle: Text(widget.petName),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
                               icon: const Icon(Icons.phone),
-                              onPressed: () {},
+                              onPressed: () {
+                                debugPrint("Chamando o dono");
+                              },
                             ),
                             IconButton(
                               icon: const Icon(Icons.message),
-                              onPressed: () {},
+                              onPressed: () {
+                                debugPrint("Enviando mensagem");
+                              },
                             ),
                           ],
                         ),
@@ -266,14 +287,5 @@ class _PetDetailsScreenState extends State<PetDetailsScreen> {
         ],
       ),
     );
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<PageController>(
-        '_pageController', _pageController));
-    properties.add(DiagnosticsProperty<PageController>(
-        '_pageController', _pageController));
   }
 }

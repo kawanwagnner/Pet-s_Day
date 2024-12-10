@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-
 class HomeController {
   final PageController pageController = PageController(
     viewportFraction: 0.75,
@@ -97,7 +93,7 @@ class HomeController {
     } else if (index == 2) {
       Navigator.pushNamed(context, '/favorites');
     } else if (index == 3) {
-      Navigator.pushNamed(context, '/login');
+      Navigator.pushNamed(context, '/createPet');
     }
   }
 
@@ -230,7 +226,7 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.login),
-            label: 'Login',
+            label: 'Criar Pet',
           ),
         ],
       ),

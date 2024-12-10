@@ -1,53 +1,67 @@
-// auth_controller.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthController {
+class LoginController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  // URL do endpoint de login da API
   static const String apiUrl =
       "https://pet-adopt-dq32j.ondigitalocean.app/user/login";
 
-  // Função para realizar login com API usando requisição POST
   Future<Map<String, dynamic>> login() async {
     final String email = emailController.text.trim();
-    final String password = passwordController.text;
+    final String password = passwordController.text.trim();
 
-    // Valida se os campos estão vazios
+    print("Email inserido: $email"); // Debug do email
+    print("Senha inserida: $password"); // Debug da senha
+
     if (email.isEmpty || password.isEmpty) {
       throw Exception("Por favor, preencha todos os campos.");
     }
 
     try {
-      // Envia a requisição POST para o endpoint
+      print("Iniciando requisição para API: $apiUrl"); // Debug do endpoint
+
+      // Adicionando os prints dos cabeçalhos e corpo enviados
+      print("Cabeçalhos enviados: ${{"Content-Type": "application/json"}}");
+      print("Corpo enviado: ${jsonEncode({
+            "email": email,
+            "password": password
+          })}");
+
+      // Requisição HTTP
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "email": email,
-          "password": password,
-        }),
+        body: jsonEncode({"email": email, "password": password}),
       );
 
-      // Log da resposta para depuração
-      print('Resposta da API: ${response.statusCode} - ${response.body}');
+      print(
+          "Resposta recebida: ${response.statusCode}"); // Debug do código HTTP
+      print(
+          "Corpo da resposta: ${response.body}"); // Debug do corpo da resposta
 
-      // Decodifica a resposta da API
-      final Map<String, dynamic> data = jsonDecode(response.body);
+      final data = jsonDecode(response.body);
 
-      // Tratamento de status codes
+      // Verifica status HTTP
       if (response.statusCode == 200) {
-        // Supondo que a API retorna um token ou dados do usuário
-        if (data.containsKey('token')) {
-          // Salva o token e outras informações no SharedPreferences
+        print(
+            "Login bem-sucedido! Dados retornados: $data"); // Debug de sucesso
+
+        if (data.containsKey('token') && data.containsKey('userId')) {
+          // Salva os dados no SharedPreferences
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', data['token']);
           await prefs.setString('userId', data['userId']);
-          await prefs.setBool('isAdmin', data['isAdmin']);
+
+          if (data.containsKey('isAdmin')) {
+            await prefs.setBool('isAdmin', data['isAdmin']);
+          }
+
+          print("Token salvo: ${data['token']}"); // Debug do token
+          print("UserId salvo: ${data['userId']}"); // Debug do userId
 
           return {
             "success": true,
@@ -55,53 +69,54 @@ class AuthController {
             "data": data
           };
         } else {
-          // Caso o token não esteja presente, considere como erro
-          throw Exception(data['message'] ?? "Erro desconhecido no login.");
+          throw Exception(
+              data['message'] ?? "Erro: Resposta incompleta da API.");
         }
       } else if (response.statusCode == 400) {
-        // 400: Requisição inválida (por exemplo, validação falhou)
+        print("Erro 400: ${data['message']}"); // Debug de erro 400
         throw Exception(data['message'] ?? "Requisição inválida.");
       } else if (response.statusCode == 401) {
-        // 401: Não autorizado (credenciais inválidas)
+        print("Erro 401: ${data['message']}"); // Debug de erro 401
         throw Exception(data['message'] ?? "Credenciais inválidas.");
       } else if (response.statusCode == 500) {
-        // 500: Erro interno do servidor
+        print("Erro 500: Erro interno do servidor."); // Debug de erro 500
         throw Exception(
-            "Erro interno do servidor. Por favor, tente novamente mais tarde.");
+            "Erro interno do servidor. Tente novamente mais tarde.");
       } else {
-        // Outros códigos de status
+        print(
+            "Erro inesperado: ${response.statusCode} - ${response.body}"); // Debug para outros códigos de erro
         throw Exception(
             "Erro ao se conectar com o servidor. Status: ${response.statusCode}");
       }
     } catch (e) {
-      // Captura e lança a exceção para ser tratada na UI
-      print('Erro na requisição de login: $e');
+      print('Erro na requisição de login: $e'); // Debug do catch
       throw Exception("Falha na requisição: $e");
     }
   }
 
-  // Função para limpar os campos após o login
   void clearControllers() {
+    print("Limpando campos de entrada"); // Debug do clear
     emailController.clear();
     passwordController.clear();
   }
 
-  // Função para descartar os controladores quando não forem mais necessários
   void dispose() {
+    print("Disposing controllers"); // Debug do dispose
     emailController.dispose();
     passwordController.dispose();
   }
 
-  // Método para verificar se o usuário está logado
   Future<bool> isLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
+    print("Token encontrado no dispositivo: $token"); // Debug do token salvo
     return token != null;
   }
 
-  // Método para fazer logout
   Future<void> logout() async {
+    print("Realizando logout..."); // Debug do logout
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+    print("SharedPreferences limpo com sucesso."); // Debug do clear
   }
 }

@@ -12,7 +12,7 @@ class WelcomeScreen extends StatelessWidget {
             Image.asset(
               'assets/img/welcome.png',
               width: 700,
-              fit: BoxFit.cover, // Ajusta a imagem para preencher o espaço
+              fit: BoxFit.cover,
             ),
             const SizedBox(height: 70),
             const SizedBox(

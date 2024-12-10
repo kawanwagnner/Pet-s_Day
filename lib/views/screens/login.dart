@@ -13,35 +13,46 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final AuthController _authController = AuthController();
+  final LoginController _loginController = LoginController();
   bool _isLoading = false;
 
   void _login() async {
+    print("Iniciando processo de login..."); // Debug
+
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final response = await _authController.login();
+      print("Chamando método login() do LoginController"); // Debug
+      final response = await _loginController.login();
+
+      print("Resposta do login: $response"); // Debug da resposta
+
       setState(() {
         _isLoading = false;
       });
 
       if (response['success']) {
+        print("Login realizado com sucesso!"); // Debug de sucesso
         // Exibe uma mensagem de sucesso
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login bem-sucedido!')),
         );
 
         // Limpa os campos de entrada
-        _authController.clearControllers();
+        print("Limpando os campos de entrada..."); // Debug do clear
+        _loginController.clearControllers();
 
         // Navega para a HomeScreen
+        print("Navegando para a HomeScreen..."); // Debug da navegação
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       } else {
+        print(
+            "Erro retornado pela API: ${response['message']}"); // Debug do erro da API
         // Exibe o erro retornado pela API
         _showError(response['message']);
       }
@@ -49,12 +60,16 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         _isLoading = false;
       });
-      // Exibe o erro retornado
-      _showError(error.toString().replaceFirst('Exception: ', ''));
+
+      print("Erro capturado no processo de login: $error"); // Debug do erro
+
+      // Exibe a mensagem de erro exatamente como veio na exceção
+      _showError(error.toString());
     }
   }
 
   void _showError(String message) {
+    print("Exibindo mensagem de erro: $message"); // Debug do erro exibido
     showDialog(
       context: context,
       builder: (context) {
@@ -65,6 +80,8 @@ class _LoginPageState extends State<LoginPage> {
             TextButton(
               child: const Text("OK"),
               onPressed: () {
+                print(
+                    "Fechando diálogo de erro"); // Debug do fechamento do diálogo
                 Navigator.of(context).pop();
               },
             ),
@@ -76,8 +93,13 @@ class _LoginPageState extends State<LoginPage> {
 
   // Método para verificar se o usuário já está logado
   void _checkLoginStatus() async {
-    bool isLoggedIn = await _authController.isLoggedIn();
+    print("Verificando se o usuário já está logado..."); // Debug
+    bool isLoggedIn = await _loginController.isLoggedIn();
+
+    print("Status de login: $isLoggedIn"); // Debug do status de login
+
     if (isLoggedIn) {
+      print("Usuário já está logado, navegando para a HomeScreen..."); // Debug
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),
@@ -88,12 +110,14 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    print("Inicializando LoginPage..."); // Debug
     _checkLoginStatus();
   }
 
   @override
   void dispose() {
-    _authController.dispose();
+    print("Limpando recursos de LoginPage..."); // Debug
+    _loginController.dispose();
     super.dispose();
   }
 
@@ -118,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
-                    controller: _authController.emailController,
+                    controller: _loginController.emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       labelText: "E-mail",
@@ -132,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 10),
                   TextFormField(
-                    controller: _authController.passwordController,
+                    controller: _loginController.passwordController,
                     keyboardType: TextInputType.text,
                     obscureText: true,
                     decoration: const InputDecoration(
@@ -151,6 +175,8 @@ class _LoginPageState extends State<LoginPage> {
                     child: TextButton(
                       child: const Text("Recuperar Senha"),
                       onPressed: () {
+                        print(
+                            "Navegando para a página de recuperação de senha"); // Debug
                         Navigator.pushNamed(context, '/reset-password');
                       },
                     ),
@@ -196,41 +222,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Container(
-                    height: 60,
-                    alignment: Alignment.centerLeft,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF3C5A99),
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                    ),
-                    child: SizedBox.expand(
-                      child: TextButton(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            const Text(
-                              "Login com Facebook",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                fontSize: 20,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                            SizedBox(
-                              height: 28,
-                              width: 28,
-                              child: Image.asset("assets/img/fb-icon.png"),
-                            ),
-                          ],
-                        ),
-                        onPressed: () {
-                          // Implementar login com Facebook
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
                   SizedBox(
                     height: 40,
                     child: TextButton(
@@ -239,6 +230,7 @@ class _LoginPageState extends State<LoginPage> {
                         textAlign: TextAlign.center,
                       ),
                       onPressed: () {
+                        print("Navegando para a página de cadastro"); // Debug
                         Navigator.pushNamed(context, '/signup');
                       },
                     ),

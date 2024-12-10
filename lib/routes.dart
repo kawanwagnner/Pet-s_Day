@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pet_adopt/views/screens/all_pets_page.dart';
+import 'package:pet_adopt/views/screens/create_pet_page.dart';
 import 'package:pet_adopt/views/screens/login.dart';
 import 'package:pet_adopt/views/screens/profile.dart';
 import 'package:pet_adopt/views/screens/reset-password.dart';
@@ -44,8 +46,12 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => const SignupPage());
     case '/reset-password': // Rota Forgot Password
       return MaterialPageRoute(builder: (context) => const ResetPasswordPage());
-    case '/profile': // Rota Forgot Password
+    case '/profile': // Rota de Perfil do User
       return MaterialPageRoute(builder: (context) => const ProfilePage());
+    case '/createPet': // Rota de Criar um Pet
+      return MaterialPageRoute(builder: (context) => const CreatePetPage());
+    case '/allPets': // Rota todos os Pets em Formato de Lsita
+      return MaterialPageRoute(builder: (context) => const AllPetsPage());
     default:
       return MaterialPageRoute(builder: (context) => const HomeScreen());
   }
