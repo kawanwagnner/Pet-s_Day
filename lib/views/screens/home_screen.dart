@@ -35,6 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
     for (var pet in _controller.pets) {
       final petType = await _determineType(pet['imagePath']);
       pet['type'] = petType; // Adiciona o tipo ao objeto pet
+      print(
+          "Pet: ${pet['petName']} - Tipo: ${pet['type']}"); // Debug para verificar a categoria
     }
 
     setState(() {
@@ -49,9 +51,12 @@ class _HomeScreenState extends State<HomeScreen> {
       // Use a Google Vision API para classificar a imagem
       final result = await _googleVisionApi.classifyImage(imagePath);
 
+      // Imprimir o resultado para ver como a API está classificando
+      print('Resultado da classificação: $result');
+
       // Mapeie as categorias retornadas para suas categorias locais
-      if (result.contains("dog")) return "Cachorros";
-      if (result.contains("cat")) return "Gatos";
+      if (result == "Cachorro") return "Cachorros";
+      if (result == "Gato") return "Gatos";
       return "Outro";
     } catch (e) {
       print("Erro ao classificar a imagem: $e");
@@ -63,8 +68,10 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_selectedCategory == "Todos") {
       return _controller.pets;
     }
+
     return _controller.pets.where((pet) {
-      return pet['type'] == _selectedCategory;
+      // Verifica se a categoria do pet corresponde à categoria selecionada
+      return pet['type'] != null && pet['type'] == _selectedCategory;
     }).toList();
   }
 

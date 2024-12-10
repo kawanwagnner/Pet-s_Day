@@ -31,14 +31,21 @@ class GoogleVisionApi {
       final labels = data['responses'][0]['labelAnnotations'];
 
       if (labels != null && labels.isNotEmpty) {
+        // Loop através das labels e verifica se existe "dog" ou "cat"
         for (var label in labels) {
-          if (label['description'].toLowerCase().contains("dog")) {
+          final description = label['description'].toLowerCase();
+
+          // Debug: Imprimir cada label para verificar como a API está retornando
+          print('Descrição da label: $description');
+
+          if (description == "dog" || description == "cachorro") {
             return "Cachorro";
-          } else if (label['description'].toLowerCase().contains("cat")) {
+          } else if (description == "cat" || description == "gato") {
             return "Gato";
           }
         }
-        return "Outro animal ou objeto";
+        // Caso não encontre "dog" ou "cat", retorna "Outro"
+        return "Outro";
       } else {
         return "Nenhum rótulo identificado";
       }
