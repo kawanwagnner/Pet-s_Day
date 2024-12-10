@@ -26,8 +26,8 @@ class HomeController {
 
   Future<void> fetchPets() async {
     try {
-      final response = await http.get(
-          Uri.parse('https://pet-adopt-dq32j.ondigitalocean.app/pet/pets'));
+      final response = await http.get(Uri.parse(
+          'https://pet-adopt-dq32j.ondigitalocean.app/pet/pets?page=1&limit=5'));
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body) as Map<String, dynamic>;

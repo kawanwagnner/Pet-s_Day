@@ -35,9 +35,6 @@ class GoogleVisionApi {
         for (var label in labels) {
           final description = label['description'].toLowerCase();
 
-          // Debug: Imprimir cada label para verificar como a API está retornando
-          print('Descrição da label: $description');
-
           if (description == "dog" || description == "cachorro") {
             return "Cachorro";
           } else if (description == "cat" || description == "gato") {
