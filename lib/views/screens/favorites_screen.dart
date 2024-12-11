@@ -45,7 +45,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         MaterialPageRoute(
                           builder: (context) => PetDetailsScreen(
                             petName: pet['name'],
-                            imagePath: pet['imagePath'],
                             age: pet['age'],
                             weight: pet['weight'],
                             imagePaths: const [],

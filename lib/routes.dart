@@ -29,7 +29,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
         return MaterialPageRoute(
           builder: (context) => PetDetailsScreen(
             petName: args['petName'],
-            imagePath: args['imagePath'],
             age: args['age'], // Passa a idade correta
             weight: args['weight'],
             imagePaths: const [], // Passa o peso correto

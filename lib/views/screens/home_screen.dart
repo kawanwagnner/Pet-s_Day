@@ -17,30 +17,69 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final HomeController _controller = HomeController();
   final GoogleVisionApi _googleVisionApi =
-      GoogleVisionApi("AIzaSyAcAa_yBMcOmqOttFCWNYQylsV52N9ig8k");
+      GoogleVisionApi("YOUR_GOOGLE_VISION_API_KEY");
 
-  bool _isLoading = true; // Indicador de carregamento
-  String _selectedCategory = "Todos"; // Categoria selecionada
+  bool _isLoading = true;
+  String _selectedCategory = "Todos";
+
+  bool _isFetchingMore = false;
+  bool _hasMore = true;
 
   @override
   void initState() {
     super.initState();
     _loadPets();
+
+    _controller.pageController.addListener(_scrollListener);
   }
 
-  Future<void> _loadPets() async {
-    await _controller.fetchPets();
+  @override
+  void dispose() {
+    _controller.pageController.removeListener(_scrollListener);
+    _controller.dispose();
+    super.dispose();
+  }
 
-    // Classifica cada pet usando Google Vision API
+  void _scrollListener() {
+    if (_controller.pageController.position.atEdge) {
+      bool isEnd = _controller.pageController.position.pixels != 0;
+      if (isEnd) {
+        _loadMorePets();
+      }
+    }
+  }
+
+  Future<void> _loadPets(
+      {int? page, int? limit, bool isRefresh = false}) async {
+    if (isRefresh) {
+      _controller.currentPage = 1;
+      _hasMore = true;
+      _controller.pets.clear();
+    }
+
+    if (!_hasMore) return;
+
+    setState(() {
+      _isLoading = !isRefresh && _controller.pets.isEmpty;
+      _isFetchingMore = !isRefresh && _controller.pets.isNotEmpty;
+    });
+
+    await _controller.fetchPets(page: page, limit: limit);
+
     for (var pet in _controller.pets) {
-      final petType = await _determineType(pet['imagePath']);
-      pet['type'] = petType; // Adiciona o tipo ao objeto pet
-      print(
-          "Pet: ${pet['petName']} - Tipo: ${pet['type']}"); // Debug para verificar a categoria
+      if (pet['type'] == null) {
+        final petType = await _determineType(pet['imagePath']);
+        pet['type'] = petType;
+      }
     }
 
     setState(() {
-      _isLoading = false; // Carregamento concluído
+      _isLoading = false;
+      _isFetchingMore = false;
+      if (_controller.pets.length <
+          (_controller.currentPage * _controller.limit)) {
+        _hasMore = false;
+      }
     });
   }
 
@@ -48,18 +87,11 @@ class _HomeScreenState extends State<HomeScreen> {
     if (imagePath == null || imagePath.isEmpty) return "Outro";
 
     try {
-      // Use a Google Vision API para classificar a imagem
       final result = await _googleVisionApi.classifyImage(imagePath);
-
-      // Imprimir o resultado para ver como a API está classificando
-      print('Resultado da classificação: $result');
-
-      // Mapeie as categorias retornadas para suas categorias locais
-      if (result == "Cachorro") return "Cachorros";
-      if (result == "Gato") return "Gatos";
+      if (result.toLowerCase().contains("cachorro")) return "Cachorros";
+      if (result.toLowerCase().contains("gato")) return "Gatos";
       return "Outro";
     } catch (e) {
-      print("Erro ao classificar a imagem: $e");
       return "Outro";
     }
   }
@@ -70,15 +102,128 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return _controller.pets.where((pet) {
-      // Verifica se a categoria do pet corresponde à categoria selecionada
       return pet['type'] != null && pet['type'] == _selectedCategory;
     }).toList();
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  Future<void> _loadMorePets() async {
+    if (_hasMore && !_isFetchingMore) {
+      setState(() {
+        _isFetchingMore = true;
+      });
+
+      await _loadPets(
+          page: _controller.currentPage + 1, limit: _controller.limit);
+
+      setState(() {
+        _isFetchingMore = false;
+      });
+    }
+  }
+
+  Future<void> _refreshPets() async {
+    await _loadPets(isRefresh: true);
+  }
+
+  Widget _buildPetCard(BuildContext context, String petName, String imagePath,
+      int age, double weight) {
+    final String image =
+        imagePath.isNotEmpty ? imagePath : HomeController.defaultImageUrl;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Transform.scale(
+        scale: 1.0,
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.75,
+          child: PetCard(
+            petName: petName,
+            imagePath: image,
+            age: age,
+            weight: weight,
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                '/petDetails',
+                arguments: {
+                  'petName': petName,
+                  'imagePath': image,
+                  'age': age,
+                  'weight': weight,
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return const Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  Widget _buildFooter() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20.0),
+      decoration: BoxDecoration(
+        color: Colors.redAccent,
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Sobre Nós',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'Somos uma comunidade apaixonada por pets e buscamos sempre ajudar os animais a encontrarem um novo lar.',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'Nos siga nas redes sociais para ficar por dentro das novidades e conhecer mais sobre nossos projetos!',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              IconButton(
+                icon: const FaIcon(FontAwesomeIcons.facebook,
+                    color: Colors.white),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: const FaIcon(FontAwesomeIcons.instagram,
+                    color: Colors.white),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon:
+                    const FaIcon(FontAwesomeIcons.twitter, color: Colors.white),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -88,141 +233,152 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.mapPin,
-                              color: Colors.grey,
-                              size: 20,
-                            ),
-                            SizedBox(width: 5),
-                            Text(
-                              'Localização',
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 20),
-                          child: Text(
-                            "São Paulo, Brasil",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+        child: RefreshIndicator(
+          onRefresh: _refreshPets,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.mapPin,
+                                color: Colors.grey,
+                                size: 20,
+                              ),
+                              SizedBox(width: 5),
+                              Text(
+                                'Localização',
+                                style:
+                                    TextStyle(fontSize: 16, color: Colors.grey),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const FaIcon(FontAwesomeIcons.searchengin,
-                              size: 25),
-                          onPressed: () {
-                            // Implementar busca
-                          },
-                        ),
-                        IconButton(
-                          icon: const FaIcon(FontAwesomeIcons.bell, size: 25),
-                          onPressed: () {
-                            // Implementar notificações
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                const BannerWidget(),
-                const SizedBox(height: 30),
-                const Text(
-                  'Categorias',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                CategoryChips(
-                  categories: const ["Todos", "Gatos", "Cachorros"],
-                  selectedCategory: _selectedCategory,
-                  onCategorySelected: (category) {
-                    setState(() {
-                      _selectedCategory = category;
-                    });
-                  },
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Pets próximos a mim',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const AllPetsPage()),
-                        );
-                      },
-                      child: const Text(
-                        'Ver todos',
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 252, 59, 59),
-                            fontSize: 16),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : (filteredPets.isEmpty
-                        ? const Center(
+                          Padding(
+                            padding: EdgeInsets.only(left: 20),
                             child: Text(
-                              "Sem pets disponíveis",
+                              "São Paulo, Brasil",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                          )
-                        : SizedBox(
-                            height: 250,
-                            child: PageView.builder(
-                              controller: _controller.pageController,
-                              itemCount: filteredPets.length,
-                              itemBuilder: (context, index) {
-                                final pet = filteredPets[index];
-                                return _buildPetCard(
-                                  context,
-                                  pet['petName'] ?? 'Sem Nome',
-                                  pet['imagePath'] ?? '',
-                                  pet['age'] ?? 0,
-                                  (pet['weight'] ?? 0.0).toDouble(),
-                                );
-                              },
-                            ),
-                          )),
-                const SizedBox(height: 30),
-                _buildFooter(),
-              ],
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: const FaIcon(FontAwesomeIcons.searchengin,
+                                size: 25),
+                            onPressed: () {},
+                          ),
+                          IconButton(
+                            icon: const FaIcon(FontAwesomeIcons.bell, size: 25),
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  const BannerWidget(),
+                  const SizedBox(height: 30),
+                  const Text(
+                    'Categorias',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  CategoryChips(
+                    categories: const ["Todos", "Gatos", "Cachorros"],
+                    selectedCategory: _selectedCategory,
+                    onCategorySelected: (category) {
+                      setState(() {
+                        _selectedCategory = category;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Pets próximos a mim',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const AllPetsPage()),
+                          );
+                        },
+                        child: const Text(
+                          'Ver todos',
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 252, 59, 59),
+                              fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : (filteredPets.isEmpty
+                          ? const Center(
+                              child: Text(
+                                "Sem pets disponíveis",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )
+                          : Column(
+                              children: [
+                                SizedBox(
+                                  height: 250,
+                                  child: PageView.builder(
+                                    controller: _controller.pageController,
+                                    itemCount: filteredPets.length +
+                                        (_hasMore ? 1 : 0),
+                                    itemBuilder: (context, index) {
+                                      if (index == filteredPets.length) {
+                                        return _isFetchingMore
+                                            ? _buildLoadingIndicator()
+                                            : const SizedBox.shrink();
+                                      }
+
+                                      final pet = filteredPets[index];
+                                      return _buildPetCard(
+                                        context,
+                                        pet['petName'] ?? 'Sem Nome',
+                                        pet['imagePath'] ?? '',
+                                        pet['age'] ?? 0,
+                                        (pet['weight'] ?? 0.0).toDouble(),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                _buildFooter(),
+                              ],
+                            )),
+                ],
+              ),
             ),
           ),
         ),
@@ -257,98 +413,4 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
-
-Widget _buildPetCard(BuildContext context, String petName, String imagePath,
-    int age, double weight) {
-  final String image = imagePath.isNotEmpty
-      ? imagePath
-      : 'https://github.com/kawanwagnner/Pet-s_Day/blob/main/assets/img/default_image.png?raw=true';
-
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-    child: Transform.scale(
-      scale: 1.0,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.75,
-        child: PetCard(
-          petName: petName,
-          imagePath: image,
-          age: age,
-          weight: weight,
-          onTap: () {
-            Navigator.pushNamed(
-              context,
-              '/petDetails',
-              arguments: {
-                'petName': petName,
-                'imagePath': image,
-                'age': age,
-                'weight': weight,
-              },
-            );
-          },
-        ),
-      ),
-    ),
-  );
-}
-
-Widget _buildFooter() {
-  return Container(
-    width: double.infinity,
-    padding: const EdgeInsets.all(20.0),
-    decoration: BoxDecoration(
-      color: Colors.redAccent,
-      borderRadius: BorderRadius.circular(15.0),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Sobre Nós',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 10),
-        const Text(
-          'Somos uma comunidade apaixonada por pets e buscamos sempre ajudar os animais a encontrarem um novo lar.',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-          ),
-        ),
-        const SizedBox(height: 10),
-        const Text(
-          'Nos siga nas redes sociais para ficar por dentro das novidades e conhecer mais sobre nossos projetos!',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-          ),
-        ),
-        const SizedBox(height: 20),
-        Row(
-          children: [
-            IconButton(
-              icon:
-                  const FaIcon(FontAwesomeIcons.facebook, color: Colors.white),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon:
-                  const FaIcon(FontAwesomeIcons.instagram, color: Colors.white),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: const FaIcon(FontAwesomeIcons.twitter, color: Colors.white),
-              onPressed: () {},
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
 }

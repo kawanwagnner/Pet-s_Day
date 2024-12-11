@@ -1,3 +1,4 @@
+// home_controller.dart
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -10,9 +11,17 @@ class HomeController {
   int selectedIndex = 0;
   List<Map<String, dynamic>> pets = [];
 
+  // URL base da API
+  static const String baseUrl =
+      'https://pet-adopt-dq32j.ondigitalocean.app/pet/pets';
+
   // URL da imagem padrão
   static const String defaultImageUrl =
       'https://github.com/kawanwagnner/Pet-s_Day/blob/main/assets/img/default_image.png?raw=true';
+
+  // Variáveis para paginação
+  int currentPage = 1;
+  final int limit = 3;
 
   // Função para validar URLs
   bool isValidUrl(String url) {
@@ -24,16 +33,27 @@ class HomeController {
     }
   }
 
-  Future<void> fetchPets() async {
+  // Método atualizado para buscar pets com parâmetros dinâmicos
+  Future<void> fetchPets({int? page, int? limit}) async {
+    final int fetchPage = page ?? currentPage;
+    final int fetchLimit = limit ?? this.limit;
+
+    // Construir a URI com parâmetros dinâmicos
+    final Uri uri = Uri.parse(baseUrl).replace(
+      queryParameters: {
+        'page': fetchPage.toString(),
+        'limit': fetchLimit.toString(),
+      },
+    );
+
     try {
-      final response = await http.get(Uri.parse(
-          'https://pet-adopt-dq32j.ondigitalocean.app/pet/pets?page=1&limit=5'));
+      final response = await http.get(uri);
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
         final data = jsonResponse['pets'] as List<dynamic>;
 
-        pets = data.map((item) {
+        List<Map<String, dynamic>> fetchedPets = data.map((item) {
           final images = item['images'];
           String? firstImage;
 
@@ -61,6 +81,16 @@ class HomeController {
             'available': item['available']
           };
         }).toList();
+
+        // Se estiver buscando uma página diferente, adicione os pets
+        if (fetchPage > 1) {
+          pets.addAll(fetchedPets);
+        } else {
+          pets = fetchedPets;
+        }
+
+        // Atualiza a página atual
+        currentPage = fetchPage;
       } else if (response.statusCode >= 400 && response.statusCode < 600) {
         // Para qualquer erro de cliente (4xx) ou servidor (5xx), lança uma exceção
         print(
@@ -74,15 +104,18 @@ class HomeController {
     } catch (e) {
       print('Erro ao carregar pets: $e');
       // Caso ocorra algum erro, definir a imagem padrão
-      pets = [
-        {
-          'petName': 'Erro ao carregar pets',
-          'imagePath': defaultImageUrl,
-          'age': 'Desconhecida',
-          'weight': 'Desconhecido',
-          'available': false
-        }
-      ];
+      if (fetchPage == 1) {
+        pets = [
+          {
+            'petName': 'Erro ao carregar pets',
+            'imagePath': defaultImageUrl,
+            'age': 'Desconhecida',
+            'weight': 'Desconhecido',
+            'available': false
+          }
+        ];
+      }
+      // Você pode optar por não modificar pets se for uma página adicional
     }
   }
 
@@ -99,137 +132,5 @@ class HomeController {
 
   void dispose() {
     pageController.dispose();
-  }
-}
-
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final HomeController controller = HomeController();
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPets();
-  }
-
-  Future<void> _loadPets() async {
-    await controller.fetchPets();
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pets Disponíveis'),
-      ),
-      body: controller.pets.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : PageView.builder(
-              controller: controller.pageController,
-              itemCount: controller.pets.length,
-              itemBuilder: (context, index) {
-                final pet = controller.pets[index];
-                return Card(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 5,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: Image.network(
-                          pet['imagePath'],
-                          height: 200,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          // Adiciona o errorBuilder para tratar erros de carregamento
-                          errorBuilder: (BuildContext context, Object exception,
-                              StackTrace? stackTrace) {
-                            // Log do erro para depuração
-                            print(
-                                'Erro ao carregar a imagem: ${pet['imagePath']}. Erro: $exception');
-
-                            // Retorna a imagem padrão definida no HomeController
-                            return Image.network(
-                              HomeController.defaultImageUrl,
-                              height: 200,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              // Opcional: Adiciona um errorBuilder para a imagem padrão, caso também falhe
-                              errorBuilder: (BuildContext context,
-                                  Object exception, StackTrace? stackTrace) {
-                                // Log do erro ao carregar a imagem padrão
-                                print(
-                                    'Erro ao carregar a imagem padrão. Erro: $exception');
-
-                                // Retorna um ícone como fallback final
-                                return Container(
-                                  height: 200,
-                                  width: double.infinity,
-                                  color: Colors.grey[300],
-                                  child: const Icon(
-                                    Icons.pets,
-                                    size: 50,
-                                    color: Colors.grey,
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        pet['petName'] ?? 'Sem nome',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Idade: ${pet['age'] ?? 'Desconhecida'} anos',
-                      ),
-                      Text(
-                        'Peso: ${pet['weight'] ?? 'Desconhecido'} kg',
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: controller.selectedIndex,
-        onTap: (index) => controller.onItemTapped(context, index),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favoritos',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.login),
-            label: 'Criar Pet',
-          ),
-        ],
-      ),
-    );
   }
 }

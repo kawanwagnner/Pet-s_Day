@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 class PetDetailsScreen extends StatefulWidget {
   final String petName;
@@ -12,7 +13,6 @@ class PetDetailsScreen extends StatefulWidget {
     required this.imagePaths, // Recebe várias imagens
     required this.age,
     required this.weight,
-    required imagePath,
   });
 
   static List<Map<String, dynamic>> favoritePets = [];
@@ -24,21 +24,41 @@ class PetDetailsScreen extends StatefulWidget {
 class _PetDetailsScreenState extends State<PetDetailsScreen> {
   late bool isFavorited;
   late PageController _pageController;
+  late Timer _timer; // Timer para controle do carrossel
 
   @override
   void initState() {
     super.initState();
-    // Log para verificar imagens recebidas
-    debugPrint("Imagens recebidas: ${widget.imagePaths}");
     isFavorited = PetDetailsScreen.favoritePets
         .any((pet) => pet['name'] == widget.petName);
     _pageController = PageController();
+
+    // Iniciar o timer para deslizar as imagens automaticamente
+    if (widget.imagePaths.isNotEmpty) {
+      _startAutoSlide();
+    }
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _timer.cancel(); // Cancelar o timer quando a tela for descartada
     super.dispose();
+  }
+
+  // Função para iniciar o carrossel automático
+  void _startAutoSlide() {
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (_pageController.hasClients) {
+        final currentPage = _pageController.page?.toInt() ?? 0;
+        final nextPage = (currentPage + 1) % widget.imagePaths.length;
+        _pageController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
 
   void toggleFavorite() {
